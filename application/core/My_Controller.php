@@ -446,7 +446,7 @@ class MY_Controller extends CI_Controller {
 */
 class Admin extends MY_Controller
 {
-    public $limit_page = 10;
+    public $limit_page = 100;
 
     public function __construct()
     {
