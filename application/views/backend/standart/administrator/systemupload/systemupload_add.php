@@ -67,17 +67,17 @@
                             'method'  => 'POST'
                             ]); ?>
                          
-                         
+<!--                          
                                                 <div class="form-group ">
                             <label for="UploadBy" class="col-sm-2 control-label">UploadBy 
                             <i class="required">*</i>
                             </label>
                             <div class="col-sm-8">
-                                <input type="number" class="form-control" name="UploadBy" id="UploadBy" placeholder="UploadBy" value="<?= set_value('UploadBy'); ?>">
+                                <input type="number" class="form-control" name="UploadBy" id="UploadBy"  value="<?= _ent(ucwords(clean_snake_case($this->aauth->get_user()->id))); ?>">
                                 <small class="info help-block">
-                                <b>Input UploadBy</b> Max Length : 11.</small>
+                                <b>Input UploadBy</b> <?= _ent(ucwords(clean_snake_case($this->aauth->get_user()->id))); ?></small>
                             </div>
-                        </div>
+                        </div> -->
                                                  
                                                 <div class="form-group ">
                             <label for="UploadRemark" class="col-sm-2 control-label">UploadRemark 
@@ -86,7 +86,7 @@
                             <div class="col-sm-8">
                                 <textarea id="UploadRemark" name="UploadRemark" rows="5" class="textarea"><?= set_value('UploadRemark'); ?></textarea>
                                 <small class="info help-block">
-                                <b>Input UploadRemark</b> Max Length : 255.</small>
+                                <!-- <b>Input UploadRemark</b><?=get_batchid()?> Max Length : 255.</small> -->
                             </div>
                         </div>
                                                  
@@ -98,12 +98,53 @@
                                 <select  class="form-control chosen chosen-select" name="ApplicationSource" id="ApplicationSource" data-placeholder="Select ApplicationSource" >
                                     <option value=""></option>
                                     <option value="MISMER">MISMER</option>
-                                    <option value="UMNATCH">UNMATCH</option>
+                                    <option value="UNMATCH">UNMATCH</option>
                                     </select>
                                 <small class="info help-block">
                                 </small>
                             </div>
                         </div>
+
+                        <!--  -->
+
+<?php
+//functions to loop day,month,year
+// function formDay(){
+//     for($i=1; $i<=31; $i++){
+//         $selected = ($i==date('n'))? ' selected' :'';
+//         echo '<option'.$selected.' value="'.$i.'">'.$i.'</option>'."\n";
+//     }
+// }
+// //with the -8/+8 month, meaning june is center month
+// function formMonth(){
+//     $month = strtotime(date('Y').'-'.date('m').'-'.date('j').' - 8 months');
+//     $end = strtotime(date('Y').'-'.date('m').'-'.date('j').' + 8 months');
+//     while($month < $end){
+//         $selected = (date('F', $month)==date('F'))? ' selected' :'';
+//         echo '<option'.$selected.' value="'.date('F', $month).'">'.date('F', $month).'</option>'."\n";
+//         $month = strtotime("+1 month", $month);
+//     }
+// }
+
+// function formYear(){
+//     for($i=1980; $i<=date('Y'); $i++){
+//         $selected = ($i==date('Y'))? ' selected' :'';
+//         echo '<option'.$selected.' value="'.$i.'">'.$i.'</option>'."\n";
+//     }
+// }
+?>                        
+                        <!-- 
+  <p><select size="1" name="day">
+<?php //echo formDay(); ?>
+</select>-
+<select size="1" name="month">
+<?php //echo formMonth(); ?>
+</select>-
+<select size="1" name="year">
+<?php //echo formYear(); ?>
+</select>
+
+                         -->
                                                  
                                                 <div class="form-group ">
                             <label for="ProcessYear" class="col-sm-2 control-label">ProcessYear 
@@ -130,6 +171,15 @@
                                     <option value="1">Januari</option>
                                     <option value="2">Februari</option>
                                     <option value="3">Maret</option>
+                                    <option value="4">April</option>
+                                    <option value="5">Mei</option>
+                                    <option value="6">Juni</option>
+                                    <option value="7">Juli</option>
+                                    <option value="8">Agustus</option>
+                                    <option value="9">September</option>
+                                    <option value="10">Oktober</option>
+                                    <option value="11">November</option>
+                                    <option value="12">Desember</option>
                                     </select>
                                 <small class="info help-block">
                                 </small>
@@ -165,7 +215,7 @@
                             </div>
                         </div>
                                                  
-                                                <div class="form-group ">
+                                                <!-- <div class="form-group ">
                             <label for="VirtualPath" class="col-sm-2 control-label">VirtualPath 
                             <i class="required">*</i>
                             </label>
@@ -174,9 +224,9 @@
                                 <small class="info help-block">
                                 <b>Input VirtualPath</b> Max Length : 255.</small>
                             </div>
-                        </div>
+                        </div> -->
                                                  
-                                                <div class="form-group ">
+                                                <!-- <div class="form-group ">
                             <label for="FileSize" class="col-sm-2 control-label">FileSize 
                             <i class="required">*</i>
                             </label>
@@ -196,9 +246,9 @@
                                 <small class="info help-block">
                                 <b>Input ReportPath</b> Max Length : 255.</small>
                             </div>
-                        </div>
+                        </div> -->
                                                  
-                                                <div class="form-group ">
+                                                <!-- <div class="form-group ">
                             <label for="RowDataCount" class="col-sm-2 control-label">RowDataCount 
                             <i class="required">*</i>
                             </label>
@@ -207,9 +257,9 @@
                                 <small class="info help-block">
                                 <b>Input RowDataCount</b> Max Length : 11.</small>
                             </div>
-                        </div>
+                        </div> -->
                                                  
-                                                <div class="form-group ">
+                                                <!-- <div class="form-group ">
                             <label for="RowDataSucceed" class="col-sm-2 control-label">RowDataSucceed 
                             <i class="required">*</i>
                             </label>
@@ -219,8 +269,9 @@
                                 <b>Input RowDataSucceed</b> Max Length : 11.</small>
                             </div>
                         </div>
-                                                 
-                                                <div class="form-group ">
+                                                  -->
+
+                                                <!-- <div class="form-group ">
                             <label for="RowDataFailed" class="col-sm-2 control-label">RowDataFailed 
                             <i class="required">*</i>
                             </label>
@@ -229,9 +280,9 @@
                                 <small class="info help-block">
                                 <b>Input RowDataFailed</b> Max Length : 11.</small>
                             </div>
-                        </div>
+                        </div> -->
                                                  
-                                                <div class="form-group ">
+                                                <!-- <div class="form-group ">
                             <label for="ApprovalID" class="col-sm-2 control-label">ApprovalID 
                             <i class="required">*</i>
                             </label>
@@ -240,9 +291,9 @@
                                 <small class="info help-block">
                                 <b>Input ApprovalID</b> Max Length : 11.</small>
                             </div>
-                        </div>
+                        </div> -->
                                                  
-                                                <div class="form-group ">
+                                                <!-- <div class="form-group ">
                             <label for="IS_APPROVED" class="col-sm-2 control-label">IS APPROVED 
                             <i class="required">*</i>
                             </label>
@@ -251,7 +302,7 @@
                                 <small class="info help-block">
                                 <b>Input IS APPROVED</b> Max Length : 11.</small>
                             </div>
-                        </div>
+                        </div> -->
                                                 
                         <div class="message"></div>
                         <div class="row-fluid col-md-7">

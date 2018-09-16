@@ -9,10 +9,12 @@
  truncate templateuploadunmatch;
 */
  
-
+-- select * from systemupload
 -- ==================
 -- STEP 1 BULK IMPORT CSV templateuploadmimser
 -- ==================
+truncate templateuploadmismer;
+
 LOAD DATA INFILE 'C:/xampp/htdocs/cicooldev/sample_csv/DevUploadMismer.csv' 
 INTO TABLE templateuploadmismer
 FIELDS TERMINATED BY ',' 
@@ -214,3 +216,120 @@ WHERE MID=''
 */
 
 -- =================================
+
+SET SQL_SAFE_UPDATES = 0; 
+
+DELETE FROM templateuploadmismer
+ORDER BY MID ASC LIMIT 99
+
+WHERE MID IN(
+SELECT MID FROM templateuploadmismer ORDER BY ID ASC LIMIT 10
+)
+
+select count(*) from templateuploadmismer
+
+
+INSERT INTO mismerdetail
+
+			SELECT 
+			NULL RowID,
+			-- a.RowID,
+			 (SELECT max(BatchID) as BatchID FROM systemupload) BatchID,
+-- 			999 BatchID,
+			
+			--  date_format(str_to_date(a.OPEN_DATE,'%m/%d/%Y'),'%Y/%m/%d')
+			-- AS OPEN_DATE , 
+			
+			a.OPEN_DATE,
+			
+			
+			a.MID,
+			a.MERCHAN_DBA_NAME,
+			a.MSO,
+			a.SOURCE_CODE,
+			
+			CASE
+				WHEN a.POS1 <= 100 THEN 1
+				ELSE LEFT(a.POS1,1)
+			END
+			AS
+			POS1,
+			
+			CASE
+				WHEN LEFT(a.MSO,1)='A' THEN 'WMD'
+				WHEN LEFT(a.MSO,1)='B' THEN 'WPD'
+				WHEN LEFT(a.MSO,1)='C' THEN 'WPL'
+				WHEN LEFT(a.MSO,1)='D' THEN 'WBN'
+				WHEN LEFT(a.MSO,1)='E' THEN 'WSM'
+				WHEN LEFT(a.MSO,1)='F' THEN 'WSY'
+				WHEN LEFT(a.MSO,1)='G' THEN 'WMK'
+				WHEN LEFT(a.MSO,1)='H' THEN 'WDR'
+				WHEN LEFT(a.MSO,1)='I' THEN 'WBJ'
+				WHEN LEFT(a.MSO,1)='J' THEN 'WMO'
+				WHEN LEFT(a.MSO,1)='K' THEN 'WPU'
+				WHEN LEFT(a.MSO,1)='L' THEN 'WJS'
+				WHEN LEFT(a.MSO,1)='M' THEN 'WJK'
+				WHEN LEFT(a.MSO,1)='N' THEN 'WJB'
+				WHEN LEFT(a.MSO,1)='O' THEN 'WJY'
+				WHEN LEFT(a.MSO,1)='R' THEN 'WYK'
+				WHEN LEFT(a.MSO,1)='S' THEN 'WMA'	
+				
+				WHEN SUBSTRING(a.MID,2,2)='01' THEN 'WMD'
+				WHEN SUBSTRING(a.MID,2,2)='02' THEN 'WPD'
+				WHEN SUBSTRING(a.MID,2,2)='03' THEN 'WPL'
+				WHEN SUBSTRING(a.MID,2,2)='04' THEN 'WBN'
+				WHEN SUBSTRING(a.MID,2,2)='05' THEN 'WSM'
+				WHEN SUBSTRING(a.MID,2,2)='06' THEN 'WSY'
+				WHEN SUBSTRING(a.MID,2,2)='07' THEN 'WMK'
+				WHEN SUBSTRING(a.MID,2,2)='08' THEN 'WDR'
+				WHEN SUBSTRING(a.MID,2,2)='09' THEN 'WBJ'
+				WHEN SUBSTRING(a.MID,2,2)='10' THEN 'WJS'
+				WHEN SUBSTRING(a.MID,2,2)='11' THEN 'WMO'
+				WHEN SUBSTRING(a.MID,2,2)='12' THEN 'WJK'
+				WHEN SUBSTRING(a.MID,2,2)='14' THEN 'WJB'
+				WHEN SUBSTRING(a.MID,2,2)='15' THEN 'WJY'
+				WHEN SUBSTRING(a.MID,2,2)='16' THEN 'WPU'
+				WHEN SUBSTRING(a.MID,2,2)='17' THEN 'WYK'
+				WHEN SUBSTRING(a.MID,2,2)='18' THEN 'WMA'    
+				
+			-- 	WHEN LEFT(a.MSO,1)='' THEN 'BLANK'
+				  ELSE NULL
+			END
+			
+			as WILAYAH,
+			
+			
+			mc.Channel as CHANNEL,
+			 
+			
+			 
+			 
+			 CASE
+			
+				WHEN LEFT(a.MID,1)='3'  THEN 'YAP'
+			
+				  ELSE 'EDC'
+			END
+			
+			as TYPE_MID
+			
+			 
+			
+			FROM templateuploadmismer a 
+			
+			LEFT JOIN mso_channel mc ON a.MSO=mc.MSO
+            
+             ORDER BY a.MID ASC 
+            LIMIT 100
+            
+
+            
+/*            
+CALL P_gen_limit();
+truncate mismerdetail
+select count(*) from mismerdetail
+WHERE
+a.MID IN(
+SELECT MID FROM templateuploadmismer ORDER BY ID ASC LIMIT 1000
+)			
+*/

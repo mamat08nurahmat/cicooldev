@@ -74,21 +74,26 @@ class Systemupload extends Admin
 			exit;
 		}
 
-		$this->form_validation->set_rules('UploadBy', 'UploadBy', 'trim|required|max_length[11]');
-		$this->form_validation->set_rules('UploadRemark', 'UploadRemark', 'trim|required|max_length[255]');
 		$this->form_validation->set_rules('ApplicationSource', 'ApplicationSource', 'trim|required');
-		$this->form_validation->set_rules('ProcessYear', 'ProcessYear', 'trim|required');
-		$this->form_validation->set_rules('ProcessMonth', 'ProcessMonth', 'trim|required');
-		$this->form_validation->set_rules('ProcessDate', 'ProcessDate', 'trim|required');
-		$this->form_validation->set_rules('systemupload_FilePath_name', 'FilePath', 'trim|required');
-		$this->form_validation->set_rules('VirtualPath', 'VirtualPath', 'trim|required|max_length[255]');
-		$this->form_validation->set_rules('FileSize', 'FileSize', 'trim|required|max_length[255]');
-		$this->form_validation->set_rules('ReportPath', 'ReportPath', 'trim|required|max_length[255]');
-		$this->form_validation->set_rules('RowDataCount', 'RowDataCount', 'trim|required|max_length[11]');
-		$this->form_validation->set_rules('RowDataSucceed', 'RowDataSucceed', 'trim|required|max_length[11]');
-		$this->form_validation->set_rules('RowDataFailed', 'RowDataFailed', 'trim|required|max_length[11]');
-		$this->form_validation->set_rules('ApprovalID', 'ApprovalID', 'trim|required|max_length[11]');
-		$this->form_validation->set_rules('IS_APPROVED', 'IS APPROVED', 'trim|required|max_length[11]');
+		$this->form_validation->set_rules('UploadRemark', 'UploadRemark', 'trim|required|max_length[255]');
+		
+//dev  form_validation off
+/*
+$this->form_validation->set_rules('UploadBy', 'UploadBy', 'trim|required|max_length[11]');
+
+$this->form_validation->set_rules('ProcessYear', 'ProcessYear', 'trim|required');
+$this->form_validation->set_rules('ProcessMonth', 'ProcessMonth', 'trim|required');
+$this->form_validation->set_rules('ProcessDate', 'ProcessDate', 'trim|required');
+$this->form_validation->set_rules('systemupload_FilePath_name', 'FilePath', 'trim|required');
+$this->form_validation->set_rules('VirtualPath', 'VirtualPath', 'trim|required|max_length[255]');
+$this->form_validation->set_rules('FileSize', 'FileSize', 'trim|required|max_length[255]');
+$this->form_validation->set_rules('ReportPath', 'ReportPath', 'trim|required|max_length[255]');
+$this->form_validation->set_rules('RowDataCount', 'RowDataCount', 'trim|required|max_length[11]');
+$this->form_validation->set_rules('RowDataSucceed', 'RowDataSucceed', 'trim|required|max_length[11]');
+$this->form_validation->set_rules('RowDataFailed', 'RowDataFailed', 'trim|required|max_length[11]');
+$this->form_validation->set_rules('ApprovalID', 'ApprovalID', 'trim|required|max_length[11]');
+$this->form_validation->set_rules('IS_APPROVED', 'IS APPROVED', 'trim|required|max_length[11]');
+*/
 		
 
 		if ($this->form_validation->run()) {
@@ -96,29 +101,50 @@ class Systemupload extends Admin
 			$systemupload_FilePath_name = $this->input->post('systemupload_FilePath_name');
 		
 			$save_data = [
+				// 'UploadDate' => date('Y-m-d H:i:s'),
+				// 'UploadBy' => $this->input->post('UploadBy'),
+				// 'UploadRemark' => $this->input->post('UploadRemark'),
+				// 'ApplicationSource' => $this->input->post('ApplicationSource'),
+				// 'ProcessYear' => $this->input->post('ProcessYear'),
+				// 'ProcessMonth' => $this->input->post('ProcessMonth'),
+				// 'ProcessDate' => $this->input->post('ProcessDate'),
+				// 'VirtualPath' => $this->input->post('VirtualPath'),
+				// 'FileSize' => $this->input->post('FileSize'),
+				// 'ReportPath' => $this->input->post('ReportPath'),
+				// 'RowDataCount' => $this->input->post('RowDataCount'),
+				// 'RowDataSucceed' => $this->input->post('RowDataSucceed'),
+				// 'RowDataFailed' => $this->input->post('RowDataFailed'),
+				// 'ApprovalID' => $this->input->post('ApprovalID'),
+				// 'IS_APPROVED' => $this->input->post('IS_APPROVED'),
+
 				'UploadDate' => date('Y-m-d H:i:s'),
-				'UploadBy' => $this->input->post('UploadBy'),
+				'UploadBy' => 999,
 				'UploadRemark' => $this->input->post('UploadRemark'),
 				'ApplicationSource' => $this->input->post('ApplicationSource'),
 				'ProcessYear' => $this->input->post('ProcessYear'),
 				'ProcessMonth' => $this->input->post('ProcessMonth'),
 				'ProcessDate' => $this->input->post('ProcessDate'),
-				'VirtualPath' => $this->input->post('VirtualPath'),
-				'FileSize' => $this->input->post('FileSize'),
-				'ReportPath' => $this->input->post('ReportPath'),
-				'RowDataCount' => $this->input->post('RowDataCount'),
-				'RowDataSucceed' => $this->input->post('RowDataSucceed'),
-				'RowDataFailed' => $this->input->post('RowDataFailed'),
-				'ApprovalID' => $this->input->post('ApprovalID'),
-				'IS_APPROVED' => $this->input->post('IS_APPROVED'),
+				'VirtualPath' => 'VirtualPath',
+				'FileSize' => 123,
+				'ReportPath' => 'ReportPath',
+				'RowDataCount' => 111,
+				'RowDataSucceed' => 222,
+				'RowDataFailed' => 333,
+				'ApprovalID' => 999,
+				'IS_APPROVED' => 0,				
 			];
 
 			if (!is_dir(FCPATH . '/uploads/systemupload/')) {
 				mkdir(FCPATH . '/uploads/systemupload/');
 			}
 
+
+
 			if (!empty($systemupload_FilePath_name)) {
-				$systemupload_FilePath_name_copy = date('YmdHis') . '-' . $systemupload_FilePath_name;
+				// format file name csv 
+				// $systemupload_FilePath_name_copy = date('YmdHis') . '-' . $systemupload_FilePath_name;
+				$BatchID = get_batchid();
+				$systemupload_FilePath_name_copy = $BatchID. '-' . $this->input->post('ApplicationSource').'.csv';
 
 				rename(FCPATH . 'uploads/tmp/' . $systemupload_FilePath_uuid . '/' . $systemupload_FilePath_name, 
 						FCPATH . 'uploads/systemupload/' . $systemupload_FilePath_name_copy);
@@ -378,7 +404,7 @@ class Systemupload extends Admin
 				]);
 			exit;
 		}
-
+// ????????????????????????????????????????
 		$uuid = $this->input->post('qquuid');
 
 		echo $this->upload_file([
@@ -463,6 +489,82 @@ class Systemupload extends Admin
 
 		$this->model_systemupload->pdf('systemupload', 'systemupload');
 	}
+
+// ---dev
+	public function view_temp($BatchID){
+
+		$systemupload = $this->model_systemupload->find($BatchID);
+
+		// print_r($systemupload);
+
+		// dev
+
+		$truncate = $this->db->query('truncate templateuploadmismer');
+		$xxx = '"'; //!!!!!!!!!
+		$lokasi_csv='C:/xampp/htdocs/cicooldev/uploads/systemupload/'.$systemupload->BatchID.'-'.$systemupload->ApplicationSource.'.csv';
+		
+
+if($systemupload->ApplicationSource="MISMER"){
+
+
+// $truncate = $this->db->query('truncate templateuploadmismer');
+// $xxx = '"';
+// $lokasi_csv='C:/xampp/htdocs/cicooldev/sample_csv/DevUploadMismer.csv';
+
+$set = "(MID,MERCHAN_DBA_NAME,STATUS_EDC,@OPEN_DATE,MSO,SOURCE_CODE,POS1,IS_VALID,ID)
+SET OPEN_DATE = STR_TO_DATE(@OPEN_DATE, '%m/%d/%Y')";
+
+$res = $this->db->query("
+LOAD DATA INFILE '$lokasi_csv' 
+INTO TABLE templateuploadmismer
+FIELDS TERMINATED BY ',' 
+ENCLOSED BY '$xxx' 
+LINES TERMINATED BY '\n'
+ IGNORE 1 ROWS
+ ".$set."
+ ;
+ ");
+
+}else{
+
+	
+	// $truncate = $this->db->query('truncate templateuploadmismer');
+	// $xxx = '"';
+	// $lokasi_csv='C:/xampp/htdocs/cicooldev/sample_csv/DevUploadMismer.csv'; 
+	$set = "
+	(@OPEN_DATE,MID,MERCHAN_DBA_NAME,MSO,SOURCE_CODE,POS1,WILAYAH,CHANNEL,TYPE_MID,RowID)
+	SET OPEN_DATE = STR_TO_DATE(@OPEN_DATE, '%m/%d/%Y')	
+	";
+	
+	$res = $this->db->query("
+	LOAD DATA INFILE '$lokasi_csv' 
+	INTO TABLE templateuploadunmatch
+	FIELDS TERMINATED BY ',' 
+	ENCLOSED BY '$xxx' 
+	LINES TERMINATED BY '\n'
+	 IGNORE 1 ROWS
+	 ".$set."
+	 ;
+
+	 
+
+
+	 ");
+	
+
+
+}		
+
+
+// print_r($res);
+if($res){
+	$ApplicationSource = strtolower($systemupload->ApplicationSource);
+	redirect(site_url('administrator/templateupload'.$ApplicationSource.''),'refresh');		
+}
+
+	}
+
+
 }
 
 

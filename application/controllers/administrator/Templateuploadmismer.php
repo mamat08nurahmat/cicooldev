@@ -510,7 +510,35 @@ $res = 			$this->db->query("
 			// return $this->model_templateuploadmismer->remove($id);
 	}
 
-	
+	// dev generate per 100 data
+
+	public function generate_limit()
+	{
+		// $templateuploadmismer = $this->model_templateuploadmismer->find($id);
+
+
+
+		$res = 			$this->db->query("
+		
+		CALL P_gen_limit();			
+			");
+
+if($res){
+
+	$del = 			$this->db->query(" 
+	SET SQL_SAFE_UPDATES = 0; 
+DELETE FROM templateuploadmismer
+ORDER BY MID ASC LIMIT 100
+
+	");
+
+
+}			
+
+			// return $this->model_templateuploadmismer->remove($id);
+	}
+
+
 	/**
 	* Export to excel
 	*

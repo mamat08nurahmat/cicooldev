@@ -1,5 +1,36 @@
 <?php
 
+if(!function_exists('get_batchid')) {
+	function get_batchid() {
+		$ci =& get_instance();
+	
+		  $query = $ci->db->query("
+			SELECT MAX(BatchID+1) as BatchID FROM systemupload
+		  ")->row();
+
+	    return $query->BatchID;
+	}
+}
+
+
+// 
+if(!function_exists('formYear')) {
+	function formYear() {
+		for($i=1980; $i<=date('Y'); $i++){
+			$selected = ($i==date('Y'))? ' selected' :'';
+			// echo '<option'.$selected.' value="'.$i.'">'.$i.'</option>'."\n";
+			$year = '<option'.$selected.' value="'.$i.'">'.$i.'</option>'."\n";
+		}		
+		return $year;
+	}
+}
+
+
+
+// 
+
+// 
+
 if(!function_exists('get_mysql_version')) {
 	function get_mysql_version() {
 		$mysql_info = explode(' ', mysqli_get_client_info());
