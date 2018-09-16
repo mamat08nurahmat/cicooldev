@@ -402,6 +402,8 @@ $res = 			$this->db->query("
 
 		// $save_mismerdetail = $this->model_mismerdetail->store($save_data);		
 
+		// BatchID
+		// ????????????
 
 		$del = 			$this->db->query("DELETE FROM mismerdetail WHERE MID='$templateuploadmismer->MID'");
 
