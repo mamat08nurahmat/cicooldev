@@ -208,6 +208,59 @@
          </div>
       </div>
    </aside>
+
+<!-- //  -->
+<div id="piechart"></div>
+
+<script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+
+<script type="text/javascript">
+// Load google charts
+google.charts.load('current', {'packages':['corechart']});
+google.charts.setOnLoadCallback(drawChart);
+
+// Draw the chart and set the chart values
+function drawChart() {
+/*
+  var DataJson =     
+ [
+  
+  ['WILAYAH', 'JUMLAH_YAP','JUMLAH_EDC'],
+  ['AAA', 8,5],
+  ['BBB', 2,6],
+  ['CCC', 4,7],
+  ['DDD', 2,6],
+  ['EEE', 8,3]
+
+];
+*/ 
+
+// var DataJson = $.ajax({
+// 					url: '<?=site_url('administrator/mismerdetail/getdata')?>', // file json hasil query database
+// 					dataType: 'json',
+// 					async: false
+// 				}).responseText;
+
+var DataJson =$.get("<?=site_url('administrator/mismerdetail/getdata')?>").done(function(data){
+    // what do I do with the data?
+console.log(data.responseText;);    
+});
+
+// console.log(DataJson);
+
+  var data = google.visualization.arrayToDataTable(DataJson);
+
+  // Optional; add a title and set the width and height of the chart
+  var options = {'title':'Dashboard', 'width':1000, 'height':1400};
+
+  // Display the chart inside the <div> element with id="piechart"
+  var chart = new google.visualization.BarChart(document.getElementById('piechart'));
+  chart.draw(data, options);
+}
+</script>
+
+<!-- //  -->
+
    <script src="https://cdnjs.cloudflare.com/ajax/libs/raphael/2.1.0/raphael-min.js"></script>
    <script src="<?= BASE_ASSET; ?>admin-lte/plugins/morris/morris.min.js"></script>
    <script>
