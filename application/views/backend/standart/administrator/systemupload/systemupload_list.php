@@ -81,20 +81,20 @@ jQuery(document).ready(domo);
                             <input type="checkbox" class="flat-red toltip" id="check_all" name="check_all" title="check all">
                            </th>
                            <th>UploadDate</th>
-                           <th>UploadBy</th>
+                           <!-- <th>UploadBy</th> -->
                            <th>UploadRemark</th>
                            <th>ApplicationSource</th>
-                           <th>ProcessYear</th>
+                           <!-- <th>ProcessYear</th>
                            <th>ProcessMonth</th>
-                           <th>ProcessDate</th>
+                           <th>ProcessDate</th> -->
                            <th>FilePath</th>
-                           <th>VirtualPath</th>
+                           <!-- <th>VirtualPath</th>
                            <th>FileSize</th>
                            <th>ReportPath</th>
                            <th>RowDataCount</th>
                            <th>RowDataSucceed</th>
                            <th>RowDataFailed</th>
-                           <th>ApprovalID</th>
+                           <th>ApprovalID</th> -->
                            <th>IS APPROVED</th>
                            <th>Action</th>
                         </tr>
@@ -107,12 +107,12 @@ jQuery(document).ready(domo);
                            </td>
                            
                            <td><?= _ent($systemupload->UploadDate); ?></td> 
-                           <td><?= _ent($systemupload->UploadBy); ?></td> 
+                           <!-- <td><?= _ent($systemupload->UploadBy); ?></td>  -->
                            <td><?= _ent($systemupload->UploadRemark); ?></td> 
                            <td><?= _ent($systemupload->ApplicationSource); ?></td> 
-                           <td><?= _ent($systemupload->ProcessYear); ?></td> 
+                           <!-- <td><?= _ent($systemupload->ProcessYear); ?></td> 
                            <td><?= _ent($systemupload->ProcessMonth); ?></td> 
-                           <td><?= _ent($systemupload->ProcessDate); ?></td> 
+                           <td><?= _ent($systemupload->ProcessDate); ?></td>  -->
                            <td>
                               <?php if (!empty($systemupload->FilePath)): ?>
                                 <?php if (is_image($systemupload->FilePath)): ?>
@@ -127,24 +127,24 @@ jQuery(document).ready(domo);
                               <?php endif; ?>
                            </td>
                             
-                           <td><?= _ent($systemupload->VirtualPath); ?></td> 
+                           <!-- <td><?= _ent($systemupload->VirtualPath); ?></td> 
                            <td><?= _ent($systemupload->FileSize); ?></td> 
                            <td><?= _ent($systemupload->ReportPath); ?></td> 
                            <td><?= _ent($systemupload->RowDataCount); ?></td> 
                            <td><?= _ent($systemupload->RowDataSucceed); ?></td> 
                            <td><?= _ent($systemupload->RowDataFailed); ?></td> 
-                           <td><?= _ent($systemupload->ApprovalID); ?></td> 
+                           <td><?= _ent($systemupload->ApprovalID); ?></td>  -->
                            <td><?= _ent($systemupload->IS_APPROVED); ?></td> 
                            <td width="200">
                               <?php is_allowed('systemupload_view', function() use ($systemupload){?>
-                              <a href="<?= site_url('administrator/systemupload/view/' . $systemupload->BatchID); ?>" class="label-default"><i class="fa fa-newspaper-o"></i> <?= cclang('view_button'); ?>
+                              <a href="javascript:void(0);" data-href="<?= site_url('administrator/systemupload/view_temp/' . $systemupload->BatchID); ?>" class="label-default approve-csv"><i class="fa fa-newspaper-o"></i> <?= cclang('view_button'); ?>
                               <?php }) ?>
-                              <?php is_allowed('systemupload_update', function() use ($systemupload){?>
+                              <!-- <?php is_allowed('systemupload_update', function() use ($systemupload){?>
                               <a href="<?= site_url('administrator/systemupload/edit/' . $systemupload->BatchID); ?>" class="label-default"><i class="fa fa-edit "></i> <?= cclang('update_button'); ?></a>
                               <?php }) ?>
                               <?php is_allowed('systemupload_delete', function() use ($systemupload){?>
                               <a href="javascript:void(0);" data-href="<?= site_url('administrator/systemupload/delete/' . $systemupload->BatchID); ?>" class="label-default remove-data"><i class="fa fa-close"></i> <?= cclang('remove_button'); ?></a>
-                               <?php }) ?>
+                               <?php }) ?> -->
                            </td>
                         </tr>
                       <?php endforeach; ?>
@@ -225,7 +225,31 @@ jQuery(document).ready(domo);
 <!-- Page script -->
 <script>
   $(document).ready(function(){
-   
+// 
+$('.approve-csv').click(function(){
+
+var url = $(this).attr('data-href');
+
+swal({
+    title: "<?= cclang('are_you_sure'); ?>",
+    text: "<?= cclang('file_to_be_approve'); ?>",
+    type: "warning",
+    showCancelButton: true,
+    confirmButtonColor: "#DD6B55",
+    confirmButtonText: "<?= cclang('yes'); ?>",
+    cancelButtonText: "<?= cclang('no_cancel_plx'); ?>",
+    closeOnConfirm: true,
+    closeOnCancel: true
+  },
+  function(isConfirm){
+    if (isConfirm) {
+      document.location.href = url;            
+    }
+  });
+
+return false;
+});
+  //  
     $('.remove-data').click(function(){
 
       var url = $(this).attr('data-href');

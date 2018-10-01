@@ -281,16 +281,16 @@ class Templateuploadmismer extends Admin
 		$templateuploadmismer = $this->model_templateuploadmismer->find($id);
 // ----------------
 		
-$del = 			$this->db->query("DELETE FROM mismerdetail WHERE MID='$templateuploadmismer->MID'");
+$del = 	$this->db->query("DELETE FROM mismerdetail WHERE MID='$templateuploadmismer->MID'");
 
-$res = 			$this->db->query("
+$res_insert = $this->db->query("
 	INSERT INTO mismerdetail
 
 	SELECT 
 	NULL RowID,
 	-- a.RowID,
-	-- (SELECT max(BatchID) as BatchID FROM systemupload) BatchID,
-	999 BatchID,
+	 (SELECT max(BatchID) as BatchID FROM systemupload) BatchID,
+	-- 999 BatchID,
 	
 	--  date_format(str_to_date(a.OPEN_DATE,'%m/%d/%Y'),'%Y/%m/%d')
 	-- AS OPEN_DATE , 
@@ -378,6 +378,45 @@ $res = 			$this->db->query("
 	
 	");
 // ----------------- 
+$res_update = $this->db->query("
+		
+		UPDATE
+		mismerdetail
+		SET CHANNEL='EXH'
+		WHERE MERCHAN_DBA_NAME like'%EXH%';
+
+		");
+
+	// if($res_update){
+	// 	// echo '<script>alert("generate succes");</script>';
+
+		// delete templateuploadmismer
+		$this->db->query(" 
+		INSERT INTO mismerunmatch
+		
+		SELECT 
+		RowID,
+		BatchID,
+		OPEN_DATE,
+		MID,
+		MERCHAN_DBA_NAME,
+		MSO,
+		SOURCE_CODE,
+		POS1,
+		WILAYAH,
+		CHANNEL,
+		TYPE_MID,
+		0 IS_UPDATE
+		
+		FROM mismerdetail
+		WHERE TYPE_MID='EDC'
+		AND CHANNEL IS NULL
+		;
+		");		
+		// redirect mismerdetail
+	// 	redirect(site_url('administrator/mismerdetail'),'refresh');
+	// }
+// -------------------
 		return $this->model_templateuploadmismer->remove($id);
 	}
 
@@ -538,6 +577,23 @@ ORDER BY MID ASC LIMIT 100
 			// return $this->model_templateuploadmismer->remove($id);
 	}
 
+
+	public function generate_all(){
+
+
+	//    $set = $this->db->query("SET SQL_SAFE_UPDATES = 0;");
+	//    $del = $this->db->query("delete from mismerdetail where MID IN(select MID from templateuploadmismer);");
+	   $res = $this->db->query("CALL P_generate_all();");
+
+	if($res){
+		echo '<script>alert("generate succes");</script>';
+
+		// delete templateuploadmismer
+		$this->db->query("truncate templateuploadmismer");		
+		// redirect mismerdetail
+		redirect(site_url('administrator/mismerdetail'),'refresh');
+	}
+	}	
 
 	/**
 	* Export to excel

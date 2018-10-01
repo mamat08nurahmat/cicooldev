@@ -15,7 +15,7 @@ class Mismerdetail extends Admin
 	public function __construct()
 	{
 		parent::__construct();
-
+		$this->load->model('model_Report');
 		$this->load->model('model_mismerdetail');
 	}
 
@@ -316,6 +316,738 @@ class Mismerdetail extends Admin
 
 		$this->model_mismerdetail->pdf('mismerdetail', 'mismerdetail');
 	}
+
+	public function update_unmatch(){
+
+		$res = 			$this->db->query("
+		
+		UPDATE
+		mismerdetail
+		SET CHANNEL='EXH'
+		WHERE MERCHAN_DBA_NAME like'%EXH%';
+
+		");
+
+	if($res){
+		echo '<script>alert("generate succes");</script>';
+
+		// delete templateuploadmismer
+		$this->db->query(" 
+		INSERT INTO mismerunmatch
+		
+		SELECT 
+		RowID,
+		BatchID,
+		OPEN_DATE,
+		MID,
+		MERCHAN_DBA_NAME,
+		MSO,
+		SOURCE_CODE,
+		POS1,
+		WILAYAH,
+		CHANNEL,
+		TYPE_MID,
+		0 IS_UPDATE
+		
+		FROM mismerdetail
+		WHERE TYPE_MID='EDC'
+		AND CHANNEL IS NULL
+		;
+		");		
+		// redirect mismerdetail
+		redirect(site_url('administrator/mismerdetail'),'refresh');
+	}
+
+	}
+// 
+//dev report
+public function report()
+{
+
+
+	$tahun = $this->input->get('tahun');
+	$bulan 	= $this->input->get('bulan');
+	
+	$this->data['query'] = $this->model_mismerdetail->get_report($bulan, $tahun);
+	
+	$this->data['tahun'] = $tahun;
+	$this->data['bulan'] = $bulan;
+
+	$this->template->title('Mismerdetail Report List');
+	$this->render('backend/standart/administrator/mismerdetail/mismerdetail_list_report', $this->data);
+// dev	//alt 
+	// $this->render('backend/standart/administrator/Report/Report_list_dev', $this->data);
+}
+
+
+public function getReport($tgl_awal,$tgl_akhir){
+
+	$tgl_awal= date("Y-m-d",strtotime($tgl_awal));
+	$tgl_akhir= date("Y-m-d",strtotime($tgl_akhir));
+
+	$report = $this->model_mismerdetail->get_report_between($tgl_awal,$tgl_akhir);
+
+	// echo"RESULTXXXXXXXXXXXXXXXXX".$tgl_awal."---------".$tgl_akhir;
+	// print_r($report);
+	$output_tabel='';
+
+	$output_tabel.='
+
+	<table class="table table-bordered table-striped" id="mytable">
+		<thead>
+		<tr>
+			<th width="80px">WILAYAH</th>
+			<th>EDC</th>
+			<th>YAP</th>
+			<th>TOTAL</th>
+			<th>ACT</th>
+			
+		</tr>
+		</thead>
+	<tbody>';
+//---------------
+	 $start = 1;
+		foreach ($report as $r)
+	   {
+
+$jumlah =$r->JUMLAH_EDC+$r->JUMLAH_YAP;			
+$output_tabel.='
+		<tr>
+		<td>'.$r->WILAYAH.'</td>
+		<td>'.$r->JUMLAH_EDC.'</td>
+		<td>'.$r->JUMLAH_YAP.'</td>
+		<td>'.$jumlah.'</td>
+		<td>
+		<button type="button" id="detail" dataTglAwal="'.$tgl_awal.'" dataTglAkhir="'.$tgl_akhir.'" dataWilayah="'.$r->WILAYAH.'" class=" btn btn-primary"   >Detail</button>			
+		</td>
+		</tr>
+';            
+// <button type="button" id="detail" dataTglAwal="'.$tgl_awal.'" dataTglAkhir="'.$tgl_akhir.'" dataWilayah="'.$r->WILAYAH.'" class=" btn btn-primary"   Onclick="get_detail()">Detail</button>			
+
+
+}
+
+//---------------	
+	
+$output_tabel.='
+	</tbody>
+	
+
+	
+	</table>	
+';
+
+// $output_tabel.='
+//         <script type="text/javascript">
+//             $(document).ready(function () {
+
+// 				// function get_detail($tgl_awal,$tgl_akhir){
+// 					// // alert('detail');
+// 					// var d=new Date($tgl_awal);
+// 					// console.log(d);
+// 					// console.log(typeof $tgl_akhir);
+// 					// console.log($tgl_akhir);
+// 					// }				
+
+//             });
+//         </script>
+// ';		
+
+//$output_tabel.='<br/> AgencyID : '.$AgencyID;
+//$output_tabel.='</br> SalesCenterID : '.$SalesCenterID;
+	
+	
+	
+	echo $output_tabel;
+
+
+
+}
+// 
+//dev
+public function getModal_between($tgl_awal,$tgl_akhir,$wilayah){
+
+	return $this->db->query("
+	
+	select
+	
+	WILAYAH,
+	CASE
+	WHEN CHANNEL IS NULL THEN  '?'
+	ELSE CHANNEL
+	END as CHANNEL,
+	SUM(IFNULL(JUMLAH_YAP,0)) JUMLAH_YAP,
+	SUM(IFNULL(JUMLAH_EDC,0)) JUMLAH_EDC,
+	BULAN,
+	TAHUN
+	from
+	(
+	
+		select
+		a.WILAYAH,
+		a.CHANNEL,
+		sum(IFNULL(a.JUMLAH,0)) JUMLAH_YAP,
+		0 JUMLAH_EDC,
+		a.BULAN,
+		a.TAHUN
+		 ,a.OPEN_DATE
+		from
+		VW_YAP2 a left join VW_EDC2 b
+		on a.wilayah = b.wilayah and a.channel = b.channel and a.OPEN_DATE=b.OPEN_DATE
+		group by a.WILAYAH,a.CHANNEL,a.BULAN,a.TAHUN ,a.OPEN_DATE
+		
+		union
+		
+		select
+		a.WILAYAH,
+		a.CHANNEL,
+		sum(IFNULL(b.JUMLAH,0)) JUMLAH_YAP,
+		sum(IFNULL(a.JUMLAH,0)) JUMLAH_EDC,
+		a.BULAN,
+		a.TAHUN,
+		a.OPEN_DATE
+		from
+		VW_EDC2 a left join VW_YAP2 b
+		on a.wilayah = b.wilayah and a.channel = b.channel and a.OPEN_DATE=b.OPEN_DATE
+		group by a.WILAYAH,a.CHANNEL,a.BULAN,a.TAHUN ,a.OPEN_DATE
+	
+	
+	-- UNION UNMATCH
+	
+	
+	
+	)a
+	where
+	OPEN_DATE  
+	between '$tgl_awal' AND '$tgl_akhir'
+    AND WILAYAH='$wilayah'
+	GROUP BY WILAYAH,CHANNEL,BULAN,TAHUN;	
+	
+	")->result();
+// 	union
+	
+// 	  SELECT 
+// 	tu.WILAYAH AS WILAYAH,
+// 	ch.CHANNEL AS CHANNEL,
+// 	0 JUMLAH_YAP,
+// 	COUNT(tu.MID) AS JUMLAH_EDC,
+// 	EXTRACT(MONTH FROM tu.OPEN_DATE) AS BULAN,
+// 	EXTRACT(YEAR FROM tu.OPEN_DATE) AS TAHUN,
+// 	tu.OPEN_DATE
+// FROM
+// 	templateunmatch tu
+// LEFT JOIN channel ch ON tu.CHANNEL = ch.ID 
+// GROUP BY tu.WILAYAH ,tu.CHANNEL ,tu.OPEN_DATE   
+	
+}
+
+
+
+// ==================
+public function get_report_unmatch($bulan,$tahun){
+
+	return $this->db->query("
+	
+	SELECT * FROM mismerunmatch
+	WHERE EXTRACT(YEAR FROM OPEN_DATE)='$tahun'
+	AND EXTRACT(MONTH FROM OPEN_DATE)='$bulan'	
+	")->result();
+
+}
+
+
+
+
+	public function getModal($tahun,$bulan,$wilayah){
+
+		return $this->db->query("
+		
+
+		select
+        
+		WILAYAH,
+		CASE
+		WHEN CHANNEL IS NULL THEN  '?'
+		ELSE CHANNEL
+		END as CHANNEL,
+		SUM(IFNULL(JUMLAH_YAP,0)) JUMLAH_YAP,
+		SUM(IFNULL(JUMLAH_EDC,0)) JUMLAH_EDC,
+		BULAN,
+		TAHUN
+		from
+		(
+        
+		select
+		a.WILAYAH,
+		a.CHANNEL,
+		sum(IFNULL(a.JUMLAH,0)) JUMLAH_YAP,
+		0 JUMLAH_EDC,
+		a.BULAN,
+		a.TAHUN
+		from
+		VW_YAP2 a left join VW_EDC2 b
+		on a.wilayah = b.wilayah and a.channel = b.channel and a.bulan = b.bulan and a.tahun = b.tahun
+		group by a.WILAYAH,a.CHANNEL,a.BULAN,a.TAHUN
+        
+		union
+        
+		select
+		a.WILAYAH,
+		a.CHANNEL,
+		sum(IFNULL(b.JUMLAH,0)) JUMLAH_YAP,
+		sum(IFNULL(a.JUMLAH,0)) JUMLAH_EDC,
+		a.BULAN,
+		a.TAHUN
+		from
+		VW_EDC2 a left join VW_YAP2 b
+		on a.wilayah = b.wilayah and a.channel = b.channel and a.bulan = b.bulan and a.tahun = b.tahun
+		group by a.WILAYAH,a.CHANNEL,a.BULAN,a.TAHUN
+
+
+-- UNION UNMATCH
+
+		union
+		
+		  SELECT 
+        tu.WILAYAH AS WILAYAH,
+        ch.CHANNEL AS CHANNEL,
+        0 JUMLAH_YAP,
+        COUNT(tu.MID) AS JUMLAH_EDC,
+        EXTRACT(MONTH FROM tu.OPEN_DATE) AS BULAN,
+        EXTRACT(YEAR FROM tu.OPEN_DATE) AS TAHUN
+    FROM
+        templateunmatch tu
+	LEFT JOIN channel ch ON tu.CHANNEL = ch.ID 
+    GROUP BY tu.WILAYAH , ch.CHANNEL,tu.OPEN_DATE    
+
+
+		)a
+		where
+		bulan = '$bulan' and tahun = '$tahun' AND WILAYAH='$wilayah'
+		GROUP BY WILAYAH,CHANNEL,BULAN,TAHUN;	
+
+		
+		")->result();
+
+	}
+
+// ----------------
+ public function getResult1($tgl_awal,$tgl_akhir){
+
+
+	$tgl_awal= date("Y-m-d",strtotime($tgl_awal));
+	$tgl_akhir= date("Y-m-d",strtotime($tgl_akhir));
+
+	// $report = $this->model_Report->get_report_between($tgl_awal,$tgl_akhir);
+	$report = $this->model_mismerdetail->getResult1($tgl_awal,$tgl_akhir);
+
+
+
+	$tabel_result1='';
+	// $tabel_result1.='';
+	$tabel_result1.='
+	<table class="blueTable">
+	<thead>
+	<tr>
+	<th width="10%">WILAYAH</th>
+	<th width="10%">EDC</th>
+	<th width="10%">YAP</th>
+	<th width="10%">TOTAL</th>
+	<th width="10%">#</th>
+	</tr>
+	</thead>
+	
+	<tbody>
+
+	';
+
+
+	$tot=0;
+	$tot1=0;
+	$tot2=0;
+	$total=0;	
+// 
+	foreach ($report as $r)
+	{
+
+// total
+$tot1+=$r->JUMLAH_EDC;
+$tot2+=$r->JUMLAH_YAP;
+$total =$tot1+$tot2;
+// total
+
+
+$jumlah =$r->JUMLAH_EDC+$r->JUMLAH_YAP;		
+
+	$tabel_result1.='
+	<tr>
+	<td>'.$r->WILAYAH.'</td>
+	<td>'.$r->JUMLAH_EDC.'</td>
+	<td>'.$r->JUMLAH_YAP.'</td>
+	<td>'.$jumlah.'</td>
+	<td>
+	<button type="button" id="detail1" dataTglAwal="'.$tgl_awal.'" dataTglAkhir="'.$tgl_akhir.'" dataWilayah="'.$r->WILAYAH.'" class=""   >Detail</button>			
+	</td>
+	</tr>
+	';
+
+}
+// end forech
+
+	$tabel_result1.='
+	<tfoot>
+	<tr >
+	<td >TOTAL</td>
+	<td>'.$tot1.'</td>
+	<td>'.$tot2.'</td>
+	<td>'.$total.'</td>
+	<td></td>
+	</tr>
+	</tfoot>
+	';
+	
+	$tabel_result1.='
+	</tbody>
+	</table>
+
+	
+	';
+
+	echo $tabel_result1;
+
+ }
+
+// result 2
+
+// ----------------
+public function getResult2($tahun,$bulan){
+
+
+	// $report = $this->model_Report->get_report($bulan,$tahun);
+	$report = $this->model_mismerdetail->getresult2($bulan,$tahun);
+
+
+
+	$tabel_result2='';
+	// $tabel_result1.='';
+	$tabel_result2.='
+	<table class="blueTable">
+	<thead>
+	<tr>
+	<th width="10%">WILAYAH</th>
+	<th width="10%">EDC</th>
+	<th width="10%">YAP</th>
+	<th width="10%">TOTAL</th>
+	<th width="10%">#</th>
+	</tr>
+	</thead>
+	
+	<tbody>
+
+	';
+
+
+	$tot=0;
+	$tot1=0;
+	$tot2=0;
+	$total=0;	
+
+	foreach ($report as $r)
+	{
+
+// total
+$tot1+=$r->JUMLAH_EDC;
+$tot2+=$r->JUMLAH_YAP;
+$total =$tot1+$tot2;
+// total
+
+
+$jumlah =$r->JUMLAH_EDC+$r->JUMLAH_YAP;		
+
+	$tabel_result2.='
+	<tr>
+	<td>'.$r->WILAYAH.'</td>
+	<td>'.$r->JUMLAH_EDC.'</td>
+	<td>'.$r->JUMLAH_YAP.'</td>
+	<td>'.$jumlah.'</td>
+	<td>
+	<button type="button" id="detail2" dataTahun="'.$tahun.'" dataBulan="'.$bulan.'" dataWilayah="'.$r->WILAYAH.'" class="">Detail</button>			
+	</td>
+	</tr>
+	';
+
+}
+// end forech
+
+	$tabel_result2.='
+	<tfoot>
+	<tr >
+	<td >TOTAL</td>
+	<td>'.$tot1.'</td>
+	<td>'.$tot2.'</td>
+	<td>'.$total.'</td>
+	<td></td>
+	</tr>
+	</tfoot>
+	';
+	
+	$tabel_result2.='
+	</table>
+
+	
+	';
+
+	echo $tabel_result2;
+
+// 	$tabel_result2='';
+// 	// $tabel_result1.='';
+// 	$tabel_result2.='
+// 	<table class="blueTable">
+// <thead>
+// <tr>
+// <th>WILAYAH</th>
+// <th>EDC</th>
+// <th>YAP</th>
+// <th>TOTAL</th>
+// <th>#</th>
+// </tr>
+// </thead>
+
+// <tbody>
+// <tr>
+// <td>cell1_1</td>
+// <td>cell2_1</td>
+// <td>cell3_1</td>
+// <td>cell4_1</td>
+// <td>cell5_1</td>
+// </tr>
+// <tr>
+// <td>cell1_2</td>
+// <td>cell2_2</td>
+// <td>cell3_2</td>
+// <td>cell4_2</td>
+// <td>cell5_2</td>
+// </tr>
+// <tr>
+// <td>cell1_3</td>
+// <td>cell2_3</td>
+// <td>cell3_3</td>
+// <td>cell4_3</td>
+// <td>cell5_3</td>
+// </tr>
+// </tbody>
+// </table>
+// 	';
+
+// 	echo $tabel_result2;
+
+ }
+
+// MODAL result1
+	public function getModalResult1($tgl_awal,$tgl_akhir,$wilayah){
+
+		// $query = $this->model_Report->getModal_between($tgl_awal,$tgl_akhir,$wilayah);
+		$query = $this->model_mismerdetail->getModalResult1($tgl_awal,$tgl_akhir,$wilayah);
+		//print_r($query);die();
+		
+		$tabel='';
+		
+		
+		
+		// -------------
+		$tabel.='
+		<div class="modal-content">
+	
+				<div class="modal-header">
+	<center>
+						<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+	<h4 class="modal-title" id="myModalLabel">Detail report Wilayah '.$wilayah.' </h4>
+	<h5 class="modal-title" id="myModalLabel">Periode :  '.$tgl_awal.'  s/d : '.$tgl_akhir.'</h5>
+	</center>
+				</div>
+				<div class="modal-body">
+		 ';
+	// -------------
+	
+		$tabel.='
+		<center>
+		<table class="blueTable">
+		<thead>
+			 <tr>
+	
+					<th>CHANNEL</th>
+					<th>JUMLAH YAP</th>
+					<th>JUMLAH EDC</th>
+					<th>TOTAL</th>
+	
+			 </tr>
+		</thead>';
+	
+	
+		$tabel.='
+				<tbody>';
+	
+				$tot=0;
+				$tot1=0;
+				$tot2=0;
+				$total=0;
+	
+	
+		foreach ($query as $q) {
+	$jumlah = $q->JUMLAH_YAP+$q->JUMLAH_EDC;
+	
+	$tot1+=$q->JUMLAH_EDC;
+	$tot2+=$q->JUMLAH_YAP;
+	
+	$total =$tot1+$tot2;
+	
+				$tabel.='
+	<tr>
+	
+				<td>'.$q->CHANNEL.'</td>
+				<td></td>
+				<td>'.$q->JUMLAH_EDC.'</td>
+				<td></td>
+	</tr>';
+	
+	}
+	
+	
+	$tabel.='</tbody>';
+	
+	$tabel.='
+	<tfoot>
+	<tr>
+	<td>TOTAL</td>
+	<td>'.$tot2.'</td>
+	<td>'.$tot1.'</td>
+	<td>'.$total.'</td>
+	</tr>
+	</tfoot>
+	';
+	
+	$tabel.='
+		</table>
+		</center>		
+		';
+	// ------------
+	
+	$tabel.='
+	
+	</div>
+	
+	
+	</div>
+		';
+	
+	
+	echo $tabel;
+	}	
+
+
+// MODAL Result2
+public function getModalResult2($tahun,$bulan,$wilayah){
+
+	// $query = $this->model_Report->getModal($tahun,$bulan,$wilayah);
+	$query = $this->model_mismerdetail->getModalResult2($tahun,$bulan,$wilayah);
+		// print_r($query);die();
+		
+		$tabel='';
+		
+		
+		
+		// -------------
+		$tabel.='
+		<div class="modal-content">
+	
+				<div class="modal-header">
+	<center>
+						<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+	<h4 class="modal-title" id="myModalLabel">Detail report Wilayah '.$wilayah.' </h4>
+	<h5 class="modal-title" id="myModalLabel">Bulan :  '.baca_bulan($bulan).'  Tahun : '.$tahun.'</h5>
+	</center>
+				</div>
+				<div class="modal-body">
+		 ';
+	// -------------
+	
+		$tabel.='
+		<center>
+		<table class="blueTable">		
+		<thead>
+			 <tr>
+	
+					<th>CHANNEL</th>
+					<th>JUMLAH YAP</th>
+					<th>JUMLAH EDC</th>
+					<th>TOTAL</th>
+	
+			 </tr>
+		</thead>';
+	
+	
+		$tabel.='
+				<tbody>';
+	
+				$tot=0;
+				$tot1=0;
+				$tot2=0;
+				$total=0;
+	
+	
+		foreach ($query as $q) {
+	$jumlah = $q->JUMLAH_YAP+$q->JUMLAH_EDC;
+	
+	$tot1+=$q->JUMLAH_EDC;
+	$tot2+=$q->JUMLAH_YAP;
+	
+	$total =$tot1+$tot2;
+	
+				$tabel.='
+	<tr>
+	
+				<td>'.$q->CHANNEL.'</td>
+				<td></td>
+				<td>'.$q->JUMLAH_EDC.'</td>
+				<td></td>
+	</tr>';
+	
+	}
+	
+	
+	$tabel.='</tbody>';
+	
+	$tabel.='
+	<tfoot>
+	<tr>
+	<td>TOTAL</td>
+	<td>'.$tot2.'</td>
+	<td>'.$tot1.'</td>
+	<td>'.$total.'</td>
+	</tr>
+	</tfoot>
+	';
+	
+	$tabel.='
+		</table>
+		</center>		
+		';
+	// ------------
+	
+	$tabel.='
+	
+	</div>
+	
+	
+	</div>
+		';
+	
+	
+	echo $tabel;
+	}
+	
+
+
 }
 
 

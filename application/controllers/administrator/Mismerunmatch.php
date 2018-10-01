@@ -320,6 +320,157 @@ class Mismerunmatch extends Admin
 
 		$this->model_mismerunmatch->pdf('mismerunmatch', 'mismerunmatch');
 	}
+// ---------------
+public function report()
+{
+
+
+	$tahun = $this->input->get('tahun');
+	$bulan 	= $this->input->get('bulan');
+	
+	$this->data['query'] = $this->model_mismerunmatch->get_report_unmatch($bulan, $tahun);
+	
+	$this->data['tahun'] = $tahun;
+	$this->data['bulan'] = $bulan;
+
+	$this->template->title('Report List');
+	$this->render('backend/standart/administrator/Report/Report_unmatch_list', $this->data);
+}
+// ----------
+// ====UNMATCH
+
+public function excel_unmatch($tahun,$bulan)
+{
+
+	$subject = 'UNMATCH';
+
+	$this->load->library('excel');
+
+	$result = $this->db->query("
+
+SELECT 
+MID,
+WILAYAH,
+CHANNEL,
+OPEN_DATE
+
+FROM mismerunmatch
+WHERE TYPE_MID='EDC' AND CHANNEL IS NULL
+
+AND EXTRACT(MONTH FROM OPEN_DATE)='$bulan'
+AND EXTRACT(YEAR FROM OPEN_DATE)='$tahun'
+AND IS_UPDATE=0
+	");
+
+	// print_r($result->result());die;
+
+	$this->excel->setActiveSheetIndex(0);
+
+	$fields = $result->list_fields();
+
+	$alphabet = 'ABCDEFGHIJKLMOPQRSTUVWXYZ';
+	$alphabet_arr = str_split($alphabet);
+	$column = [];
+
+	foreach ($alphabet_arr as $alpha) {
+		$column[] =  $alpha;
+	}
+
+	foreach ($alphabet_arr as $alpha) {
+		foreach ($alphabet_arr as $alpha2) {
+			$column[] =  $alpha.$alpha2;
+		}
+	}
+	foreach ($alphabet_arr as $alpha) {
+		foreach ($alphabet_arr as $alpha2) {
+			foreach ($alphabet_arr as $alpha3) {
+				$column[] =  $alpha.$alpha2.$alpha3;
+			}
+		}
+	}
+
+	foreach($column as $col)
+	{
+		$this->excel->getActiveSheet()->getColumnDimension($col)->setWidth(20);
+	}
+
+	$col_total = $column[count($fields)-1];
+
+	//styling
+	$this->excel->getActiveSheet()->getStyle('A1:'.$col_total.'1')->applyFromArray(
+		array(
+			'fill' => array(
+				'type' => PHPExcel_Style_Fill::FILL_SOLID,
+				'color' => array('rgb' => 'DA3232')
+			),
+			'alignment' => array(
+				'horizontal' => PHPExcel_Style_Alignment::HORIZONTAL_CENTER,
+				'vertical' => PHPExcel_Style_Alignment::VERTICAL_CENTER,
+			)
+		)
+	);
+
+	$phpColor = new PHPExcel_Style_Color();
+	$phpColor->setRGB('FFFFFF');
+
+	$this->excel->getActiveSheet()->getStyle('A1:'.$col_total.'1')->getFont()->setColor($phpColor);
+
+	$this->excel->getActiveSheet()->getRowDimension(1)->setRowHeight(40);
+
+	$this->excel->getActiveSheet()->getStyle('A1:'.$col_total.'1')
+	->getAlignment()->setWrapText(true);
+
+	$col = 0;
+	foreach ($fields as $field)
+	{
+
+		$this->excel->getActiveSheet()->setCellValueByColumnAndRow($col, 1, ucwords(str_replace('_', ' ', $field)));
+		$col++;
+	}
+
+	$row = 2;
+	foreach($result->result() as $data)
+	{
+		$col = 0;
+		foreach ($fields as $field)
+		{
+			$this->excel->getActiveSheet()->setCellValueByColumnAndRow($col, $row, $data->$field);
+			$col++;
+		}
+
+		$row++;
+	}
+
+	//set border
+	$styleArray = array(
+		  'borders' => array(
+			  'allborders' => array(
+				  'style' => PHPExcel_Style_Border::BORDER_THIN
+			  )
+		  )
+	  );
+	$this->excel->getActiveSheet()->getStyle('A1:'.$col_total.''.$row)->applyFromArray($styleArray);
+
+	$this->excel->getActiveSheet()->setTitle(ucwords($subject));
+
+	header('Content-Type: application/vnd.ms-excel');
+//	header('Content-Disposition: attachment;filename='.ucwords($subject).'-'.date('Y-m-d').'.xls');
+	header('Content-Disposition: attachment;filename='.ucwords($subject).'-'.baca_bulan($bulan).'-'.$tahun.'.xls');
+
+	header('Cache-Control: max-age=0');
+	header('Cache-Control: max-age=1');
+
+	header ('Expires: Mon, 26 Jul 1997 05:00:00 GMT');
+	header ('Last-Modified: '.gmdate('D, d M Y H:i:s').' GMT');
+	header ('Cache-Control: cache, must-revalidate');
+	header ('Pragma: public');
+
+	$objWriter = PHPExcel_IOFactory::createWriter($this->excel, 'Excel5');
+	$objWriter->save('php://output');
+}
+
+
+
 }
 
 

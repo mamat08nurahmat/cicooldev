@@ -121,9 +121,9 @@ $this->form_validation->set_rules('IS_APPROVED', 'IS APPROVED', 'trim|required|m
 				'UploadBy' => 999,
 				'UploadRemark' => $this->input->post('UploadRemark'),
 				'ApplicationSource' => $this->input->post('ApplicationSource'),
-				'ProcessYear' => $this->input->post('ProcessYear'),
-				'ProcessMonth' => $this->input->post('ProcessMonth'),
-				'ProcessDate' => $this->input->post('ProcessDate'),
+				'ProcessYear' => date('Y'),
+				'ProcessMonth' => date('m'),
+				'ProcessDate' => date('d'),
 				'VirtualPath' => 'VirtualPath',
 				'FileSize' => 123,
 				'ReportPath' => 'ReportPath',
@@ -495,17 +495,18 @@ $this->form_validation->set_rules('IS_APPROVED', 'IS APPROVED', 'trim|required|m
 
 		$systemupload = $this->model_systemupload->find($BatchID);
 
-		// print_r($systemupload);
+		// print_r($systemupload);die();
 
 		// dev
 
-		$truncate = $this->db->query('truncate templateuploadmismer');
-		$xxx = '"'; //!!!!!!!!!
-		$lokasi_csv='C:/xampp/htdocs/cicooldev/uploads/systemupload/'.$systemupload->BatchID.'-'.$systemupload->ApplicationSource.'.csv';
 		
-
-if($systemupload->ApplicationSource="MISMER"){
-
+		
+		if($systemupload->ApplicationSource=="MISMER"){
+			
+			$truncate = $this->db->query('truncate templateuploadmismer');
+			
+			$xxx = '"'; //!!!!!!!!!
+			$lokasi_csv='C:/xampp/htdocs/cicooldev/uploads/systemupload/'.$systemupload->BatchID.'-'.$systemupload->ApplicationSource.'.csv';
 
 // $truncate = $this->db->query('truncate templateuploadmismer');
 // $xxx = '"';
@@ -514,7 +515,7 @@ if($systemupload->ApplicationSource="MISMER"){
 $set = "(MID,MERCHAN_DBA_NAME,STATUS_EDC,@OPEN_DATE,MSO,SOURCE_CODE,POS1,IS_VALID,ID)
 SET OPEN_DATE = STR_TO_DATE(@OPEN_DATE, '%m/%d/%Y')";
 
-$res = $this->db->query("
+$res1 = $this->db->query("
 LOAD DATA INFILE '$lokasi_csv' 
 INTO TABLE templateuploadmismer
 FIELDS TERMINATED BY ',' 
@@ -525,7 +526,18 @@ LINES TERMINATED BY '\n'
  ;
  ");
 
+//  if($res1){
+	$ApplicationSource = strtolower($systemupload->ApplicationSource);
+	redirect(site_url('administrator/templateupload'.$ApplicationSource.''),'refresh');		
+// }
+
+
+
 }else{
+
+	$truncate = $this->db->query('truncate templateuploadunmatch');
+	$xxx = '"'; //!!!!!!!!!
+	$lokasi_csv='C:/xampp/htdocs/cicooldev/uploads/systemupload/'.$systemupload->BatchID.'-'.$systemupload->ApplicationSource.'.csv';
 
 	
 	// $truncate = $this->db->query('truncate templateuploadmismer');
@@ -533,8 +545,7 @@ LINES TERMINATED BY '\n'
 	// $lokasi_csv='C:/xampp/htdocs/cicooldev/sample_csv/DevUploadMismer.csv'; 
 	$set = "
 	(@OPEN_DATE,MID,MERCHAN_DBA_NAME,MSO,SOURCE_CODE,POS1,WILAYAH,CHANNEL,TYPE_MID,RowID)
-	SET OPEN_DATE = STR_TO_DATE(@OPEN_DATE, '%m/%d/%Y')	
-	";
+	SET OPEN_DATE = STR_TO_DATE(@OPEN_DATE, '%Y-%m-%d')	";
 	
 	$res = $this->db->query("
 	LOAD DATA INFILE '$lokasi_csv' 
@@ -552,17 +563,57 @@ LINES TERMINATED BY '\n'
 	 ");
 	
 
+	//  if($res2){
+		 $ApplicationSource = strtolower($systemupload->ApplicationSource);
+		 redirect(site_url('administrator/templateupload'.$ApplicationSource.''),'refresh');		
+	//  }
 
 }		
 
 
-// print_r($res);
-if($res){
-	$ApplicationSource = strtolower($systemupload->ApplicationSource);
-	redirect(site_url('administrator/templateupload'.$ApplicationSource.''),'refresh');		
+	}
+//=============
+// dev read csv
+	public function dev(){
+
+		$csvfile = base_url('unmatch100.csv');
+
+		$csvData = readCSV($csvfile);
+
+		print_r($csvData);
+print_r('<hr>');
+
+// Obtain a list of columns
+foreach ($csvData as $key => $row) {
+    $date[$key]  = $row[0]; //date
+	$MID[$key] = $row[1]; //MID
+	$DB_NAME[$key] = $row[2]; //MID
+	// print_r($key);
+	// print_r('<hr>');	
+	// print_r($row[0]);
+	// print_r('<hr>');	
+$data_upload = array(
+
+	
+)
+
 }
 
+ print_r($date);
+ print_r($MID);
+print_r($MID);
+
+// Sort the data with age first, then favorite
+// Add $csvData as the last parameter, to sort by the common key
+// $sortx = array_multisort($MID, SORT_ASC, $DB_NAME, SORT_ASC, $csvData);
+// print_r($sortx);
+// print_r('<hr>');
+// print_r($MID);
+
+
 	}
+
+
 
 
 }
