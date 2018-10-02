@@ -81,14 +81,14 @@ jQuery(document).ready(domo);
                             <input type="checkbox" class="flat-red toltip" id="check_all" name="check_all" title="check all">
                            </th>
                            <th>NAMA PEMOHON</th>
-                           <th>PEKERJAAN PEMOHON</th>
-                           <th>JENIS KELAMIN</th>
+                           <!-- <th>PEKERJAAN PEMOHON</th>
+                           <th>JENIS KELAMIN</th> -->
                            <th>NO KTP PEMOHON</th>
-                           <th>NPWP PEMOHON</th>
-                           <th>GAJI POKOK</th>
-                           <th>NAMA PASANGAN</th>
-                           <th>NO KTP PASANGAN</th>
-                           <th>NO REKENING PEMOHON</th>
+                           <!-- <th>NPWP PEMOHON</th>
+                           <th>GAJI POKOK</th> -->
+                           <!-- <th>NAMA PASANGAN</th>
+                           <th>NO KTP PASANGAN</th> -->
+                           <!-- <th>NO REKENING PEMOHON</th> -->
                            <th>TGL AKAD</th>
                            <th>HARGA RUMAH</th>
                            <th>NILAI KPR</th>
@@ -96,18 +96,18 @@ jQuery(document).ready(domo);
                            <th>TENOR</th>
                            <th>ANGSURAN KPR</th>
                            <th>NILAI FLPP</th>
-                           <th>NAMA PENGEMBANG</th>
+                           <!-- <th>NAMA PENGEMBANG</th>
                            <th>NAMA PERUMAHAN</th>
                            <th>ALAMAT AGUNAN</th>
                            <th>KOTA AGUNAN</th>
                            <th>KODE POS AGUNAN</th>
                            <th>LUAS TANAH</th>
-                           <th>LUAS BANGUNAN</th>
-                           <th>Batch Id</th>
+                           <th>LUAS BANGUNAN</th> -->
+                           <!-- <th>Batch Id</th>
                            <th>Create Date</th>
                            <th>Month</th>
                            <th>Year</th>
-                           <th>Is Generate</th>
+                           <th>Is Generate</th> -->
                            <th>Action</th>
                         </tr>
                      </thead>
@@ -119,14 +119,15 @@ jQuery(document).ready(domo);
                            </td>
                            
                            <td><?= _ent($system_flpp->NAMA_PEMOHON); ?></td> 
-                           <td><?= _ent($system_flpp->PEKERJAAN_PEMOHON); ?></td> 
-                           <td><?= _ent($system_flpp->JENIS_KELAMIN); ?></td> 
-                           <td><?= _ent($system_flpp->NO_KTP_PEMOHON); ?></td> 
+                           <!-- <td><?= _ent($system_flpp->PEKERJAAN_PEMOHON); ?></td> 
+                           <td><?= _ent($system_flpp->JENIS_KELAMIN); ?></td>  -->
+                             <td><?= _ent($system_flpp->NO_KTP_PEMOHON); ?></td> 
+                           <!-- 
                            <td><?= _ent($system_flpp->NPWP_PEMOHON); ?></td> 
-                           <td><?= _ent($system_flpp->GAJI_POKOK); ?></td> 
-                           <td><?= _ent($system_flpp->NAMA_PASANGAN); ?></td> 
-                           <td><?= _ent($system_flpp->NO_KTP_PASANGAN); ?></td> 
-                           <td><?= _ent($system_flpp->NO_REKENING_PEMOHON); ?></td> 
+                           <td><?= _ent($system_flpp->GAJI_POKOK); ?></td>  -->
+                           <!-- <td><?= _ent($system_flpp->NAMA_PASANGAN); ?></td> 
+                           <td><?= _ent($system_flpp->NO_KTP_PASANGAN); ?></td>  -->
+                           <!-- <td><?= _ent($system_flpp->NO_REKENING_PEMOHON); ?></td>  -->
                            <td><?= _ent($system_flpp->TGL_AKAD); ?></td> 
                            <td><?= _ent($system_flpp->HARGA_RUMAH); ?></td> 
                            <td><?= _ent($system_flpp->NILAI_KPR); ?></td> 
@@ -134,28 +135,36 @@ jQuery(document).ready(domo);
                            <td><?= _ent($system_flpp->TENOR); ?></td> 
                            <td><?= _ent($system_flpp->ANGSURAN_KPR); ?></td> 
                            <td><?= _ent($system_flpp->NILAI_FLPP); ?></td> 
-                           <td><?= _ent($system_flpp->NAMA_PENGEMBANG); ?></td> 
+                           <!-- <td><?= _ent($system_flpp->NAMA_PENGEMBANG); ?></td> 
                            <td><?= _ent($system_flpp->NAMA_PERUMAHAN); ?></td> 
                            <td><?= _ent($system_flpp->ALAMAT_AGUNAN); ?></td> 
                            <td><?= _ent($system_flpp->KOTA_AGUNAN); ?></td> 
                            <td><?= _ent($system_flpp->KODE_POS_AGUNAN); ?></td> 
                            <td><?= _ent($system_flpp->LUAS_TANAH); ?></td> 
-                           <td><?= _ent($system_flpp->LUAS_BANGUNAN); ?></td> 
-                           <td><?= _ent($system_flpp->batch_id); ?></td> 
+                           <td><?= _ent($system_flpp->LUAS_BANGUNAN); ?></td>  -->
+                           <!-- <td><?= _ent($system_flpp->batch_id); ?></td> 
                            <td><?= _ent($system_flpp->create_date); ?></td> 
                            <td><?= _ent($system_flpp->month); ?></td> 
                            <td><?= _ent($system_flpp->year); ?></td> 
-                           <td><?= _ent($system_flpp->is_generate); ?></td> 
+                           <td><?= _ent($system_flpp->is_generate); ?></td>  -->
                            <td width="200">
-                              <?php is_allowed('system_flpp_view', function() use ($system_flpp){?>
-                              <a href="<?= site_url('administrator/system_flpp/view/' . $system_flpp->ID); ?>" class="label-default"><i class="fa fa-newspaper-o"></i> <?= cclang('view_button'); ?>
+
+                           <!-- //  -->
+                           <?php is_allowed('system_flpp_view', function() use ($system_flpp){?>
+                              <a href="<?= site_url('administrator/system_flpp/get_detail_id/' . $system_flpp->NO_KTP_PEMOHON); ?>" class="btn btn-info">DETAIL TENOR</i> <?//= cclang('view_button'); ?>
                               <?php }) ?>
+
+
+                           <!--  -->
+                              <!-- <?php is_allowed('system_flpp_view', function() use ($system_flpp){?>
+                              <a href="<?= site_url('administrator/system_flpp/view/' . $system_flpp->ID); ?>" class="label-default"><i class="fa fa-newspaper-o"></i> <?= cclang('view_button'); ?>
+                              <?php }) ?> -->
                               <?php is_allowed('system_flpp_update', function() use ($system_flpp){?>
                               <a href="<?= site_url('administrator/system_flpp/edit/' . $system_flpp->ID); ?>" class="label-default"><i class="fa fa-edit "></i> <?= cclang('update_button'); ?></a>
                               <?php }) ?>
-                              <?php is_allowed('system_flpp_delete', function() use ($system_flpp){?>
+                              <!-- <?php is_allowed('system_flpp_delete', function() use ($system_flpp){?>
                               <a href="javascript:void(0);" data-href="<?= site_url('administrator/system_flpp/delete/' . $system_flpp->ID); ?>" class="label-default remove-data"><i class="fa fa-close"></i> <?= cclang('remove_button'); ?></a>
-                               <?php }) ?>
+                               <?php }) ?> -->
                            </td>
                         </tr>
                       <?php endforeach; ?>

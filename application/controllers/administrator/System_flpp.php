@@ -399,10 +399,11 @@ public function get_detail_id($ktp)
 	// $this->data['system_flpp'] = $this->model_system_flpp->find($id);
 	$get_single = $this->model_system_flpp->get_single($where);
 	
+	$nama_pemohon   = $get_single->NAMA_PEMOHON; //string
 	$tgl_akad   = $get_single->TGL_AKAD; //string
 	$tenor 		= $get_single->TENOR;
 	$nilai_kpr = $get_single->NILAI_KPR;
-	$bunga_kpr = $get_single->SUKU_BUNGA_KPR;
+	$bunga_kpr = $get_single->SUKU_BUNGA_KPR; //0,5
 	// print_r($tgl_akad);die();
 //===================================================
 	$m_time =   strtotime($tgl_akad);	
@@ -442,8 +443,8 @@ $angsuran_total_t1 = $angsuran_pokok_t1 + $angsuran_bunga_t1;
 
 // TENOR NEXT LOOP
 		$no=2;
-		$tenor_loop = $tenor - 1;
-	for ($x = 1; $x < $tenor_loop; $x++):
+		// $tenor_loop = $tenor - 1;
+	for ($x = 1; $x < $tenor; $x++):
 		
 		$no = $x+1;
 		$z  = $x-1;
@@ -466,11 +467,11 @@ $angsuran_total_t1 = $angsuran_pokok_t1 + $angsuran_bunga_t1;
 
 $outstanding_before	   = $data_array[$z]['OUTSTANDING'];
 $angsuran_pokok_before = $data_array[$z]['ANGSURAN_POKOK'];
-		//------- 
-		$outstanding_loop    =((float)$outstanding_before  - (float)$angsuran_pokok_before);
-		$angsuran_pokok_loop = "XXX";
-		$angsuran_bunga_loop = "XXX";
-		$angsuran_total_loop = "XXX";
+
+//------- 
+$outstanding_loop    =((float)$outstanding_before  - (float)$angsuran_pokok_before);
+$angsuran_bunga_loop = $outstanding_loop * ($bunga_kpr/12);
+$angsuran_pokok_loop =$angsuran_total_t1 - $angsuran_bunga_loop;
 
 		$data_array[] = array(
 
@@ -484,16 +485,36 @@ $angsuran_pokok_before = $data_array[$z]['ANGSURAN_POKOK'];
 			'OUTSTANDING' => $outstanding_loop,
 			'ANGSURAN_POKOK' => $angsuran_pokok_loop,
 			'ANGSURAN_BUNGA' => $angsuran_bunga_loop,
-			'ANGSURAN_TOTAL' => $angsuran_total_loop
+			'ANGSURAN_TOTAL' => $angsuran_total_t1
 			
 			 		
 		);
 	endfor;
 
-	print_r($data_array);die();
+	// print_r($data_array);die();
+
+	$this->data['data_array'] = $data_array;
+	$this->data['nama_pemohon'] = $nama_pemohon;
+	$this->data['no_ktp'] = $ktp;
+
+	$this->template->title('System Flpp Detail');
+	$this->render('backend/standart/administrator/system_flpp/system_flpp_detail', $this->data);
 
 
 }
+
+	public function report(){
+
+
+		// $this->data['no_ktp'] = $ktp;
+
+		$this->template->title('System Flpp Report pengembalian');
+		$this->render('backend/standart/administrator/system_flpp/system_flpp_report', $this->data);
+	
+
+
+	}
+
 
 }
 
