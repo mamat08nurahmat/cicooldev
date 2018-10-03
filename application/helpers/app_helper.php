@@ -1,5 +1,15 @@
 <?php
 
+if ( ! function_exists('currency_format'))
+{
+    function currency_format($number)
+    {
+        return 'Rp. '.number_format($number,0,',','.');
+    }
+}
+
+
+
 if(!function_exists('readCSV')) {
 
 function readCSV($file)
@@ -141,6 +151,22 @@ if(!function_exists('db_get_all_data')) {
 	    return $query->result();
 	}
 }
+
+
+if(!function_exists('db_get_all_data_distinct_batch')) {
+	function db_get_all_data_distinct_batch($table_name = null, $where = false) {
+		$ci =& get_instance();
+		if ($where) {
+			$ci->db->where($where);
+		}
+	  	// $query = $ci->db->get($table_name);
+	  	$query = $ci->db->query("SELECT distinct batch_id FROM $table_name");
+
+	    return $query->result();
+	}
+}
+
+
 
 if(!function_exists('is_image')) {
 	function is_image($filename = '') {

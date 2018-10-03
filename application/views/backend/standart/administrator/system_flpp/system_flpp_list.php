@@ -186,7 +186,8 @@ jQuery(document).ready(domo);
                      <div class="col-sm-2 padd-left-0 " >
                         <select type="text" class="form-control chosen chosen-select" name="bulk" id="bulk" placeholder="Site Email" >
                            <option value="">Bulk</option>
-                           <option value="delete">Delete</option>
+                           <option value="generate">Generate</option>
+                           <!-- <option value="delete">Delete</option> -->
                         </select>
                      </div>
                      <div class="col-sm-2 padd-left-0 ">
@@ -287,8 +288,30 @@ jQuery(document).ready(domo);
 
       var bulk = $('#bulk');
       var serialize_bulk = $('#form_system_flpp').serialize();
+// ================
+      if (bulk.val() == 'generate') {
+         swal({
+            title: "<?= cclang('are_you_sure'); ?>",
+            text: "Generate Data",
+            type: "warning",
+            showCancelButton: true,
+            confirmButtonColor: "#DD6B55",
+            confirmButtonText: "Yes",
+            cancelButtonText: "No",
+            closeOnConfirm: true,
+            closeOnCancel: true
+          },
+          function(isConfirm){
+            if (isConfirm) {
+               document.location.href = BASE_URL + '/administrator/system_flpp/generate?' + serialize_bulk;      
+            }
+          });
 
-      if (bulk.val() == 'delete') {
+        return false;
+
+      } 
+      //======================================================== 
+      else if (bulk.val() == 'delete') {
          swal({
             title: "<?= cclang('are_you_sure'); ?>",
             text: "<?= cclang('data_to_be_deleted_can_not_be_restored'); ?>",
@@ -308,7 +331,7 @@ jQuery(document).ready(domo);
 
         return false;
 
-      } else if(bulk.val() == '')  {
+      }else if(bulk.val() == '')  {
           swal({
             title: "Upss",
             text: "<?= cclang('please_choose_bulk_action_first'); ?>",

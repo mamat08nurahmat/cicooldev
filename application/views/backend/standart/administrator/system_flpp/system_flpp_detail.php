@@ -90,6 +90,14 @@ table.blueTable tfoot td {
 </section>
 <!-- Main content -->
 <section class="content">
+<!-- //  -->
+
+
+<a class="btn btn-flat btn-success" title="Export Detail" href="<?= site_url('administrator/system_flpp/export_detail_id/'.$no_ktp); ?>"><i class="fa fa-file-excel-o" ></i> Export Detail</a>
+      
+
+
+<!-- //  -->
 <hr>
 
     <h3>
@@ -97,6 +105,7 @@ table.blueTable tfoot td {
     <br>
     <small>No KTP Pemohon : </small> <?=$no_ktp;?>
     </h3>
+
 
 
 
@@ -122,10 +131,10 @@ foreach($data_array as $r):
 <td><?=$r['NO']?></td>
 <td><?=$r['Y']?></td>
 <td><?=$r['M']?></td>
-<td><?=$r['OUTSTANDING']?></td>
-<td><?=$r['ANGSURAN_POKOK']?></td>
-<td><?=$r['ANGSURAN_BUNGA']?></td>
-<td><?=$r['ANGSURAN_TOTAL']?></td>
+<td><?=currency_format($r['OUTSTANDING'])?></td>
+<td><?=currency_format($r['ANGSURAN_POKOK'])?></td>
+<td><?=currency_format($r['ANGSURAN_BUNGA'])?></td>
+<td><?=currency_format($r['ANGSURAN_TOTAL'])?></td>
 </tr>
 <?php
 endforeach;
