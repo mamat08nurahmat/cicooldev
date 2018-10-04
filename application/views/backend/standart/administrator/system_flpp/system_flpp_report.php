@@ -102,8 +102,8 @@ table.blueTable tfoot td {
             <div class="panel with-nav-tabs panel-default">
                 <div class="panel-heading">
                         <ul class="nav nav-tabs">
-                            <li class="active"><a href="#tab1default" data-toggle="tab">Pengembalian Perbulan</a></li>
-                            <li><a href="#tab2default" data-toggle="tab">Pengembalian All Batch</a></li>    	
+                            <li class="active"><a href="#tab1default" data-toggle="tab">Pengembalian All Batch</a></li>
+                            <!-- <li><a href="#tab2default" data-toggle="tab">Pengembalian Perbulan</a></li>    	 -->
                         </ul>
                 </div>
 
@@ -111,9 +111,75 @@ table.blueTable tfoot td {
                     <div class="tab-content">
 
  <!--TAB 1 Active  -->
-                        <div class="tab-pane fade in active" id="tab1default">
+<div class="tab-pane fade in active" id="tab1default">
+<form class="form-inline">
+
+<div class="form-group mx-sm-3 mb-2">
+<label for="batch">Batch</label>
+     <select  class="form-control" name="batch_id" id="batch_id" data-placeholder="Select batch" >
+      <option value=""></option>
+      <?php foreach (db_get_all_data_distinct_batch('system_flpp') as $row): ?>
+        <option value="<?= $row->batch_id ?>"><?= $row->batch_id; ?></option>
+      <?php endforeach; ?>  
+    </select>
+</div>
+
+<div class="form-group mx-sm-3 mb-2">
+
+<label for="batch">Type</label>
+     <select  class="form-control" name="type" id="type"  >
+     <option value="FLPP">Tarif FLPP</option>
+     <option value="IPMT">IPMT</option>
+     <option value="PPMT">PPMT</option>
+    </select>
+
+</div>
+<button type="button" id="export_batch" class="btn btn-primary">Export</button>
+</form>
 						
-                <form class="form-inline">
+
+
+<hr>
+
+<!-- RESULT  -->
+<!-- <div id='result1'></div> -->
+
+<!-- <table class="blueTable">
+<thead>
+<tr>
+<th>NO_KTP</th>
+<th>NAMA_PEMOHON</th>
+<th>PERIODE</th>
+<th>M</th>
+<th>Y</th>
+<th>PPMT(POKOK)</th>
+<th>IPMT(BUNGA)</th>
+</tr>
+</thead>
+
+<tbody>
+
+<tr>
+<td>cell1_1</td>
+<td>cell2_1</td>
+<td>cell1_1</td>
+<td>cell2_1</td>
+<td>cell3_1</td>
+<td>cell4_1</td>
+<td>cell5_1</td>
+</tr>
+
+</tbody>
+</table> -->
+
+<!-- /RESULT  -->
+						</div>
+ <!--/TAB 1 Active  -->
+
+ <!--TAB 2  -->
+ <div class="tab-pane fade" id="tab2default">
+	
+ <form class="form-inline">
 
 <div class="form-group mx-sm-3 mb-2">
   <label for="tahun">Tahun</label>
@@ -148,174 +214,11 @@ table.blueTable tfoot td {
 </form>
 
 
-<hr>
-
-<!-- RESULT  -->
-<!-- <div id='result1'></div> -->
-
-<table class="blueTable">
-<thead>
-<tr>
-<th>NO_KTP</th>
-<th>NAMA_PEMOHON</th>
-<th>PERIODE</th>
-<th>M</th>
-<th>Y</th>
-<th>PPMT(POKOK)</th>
-<th>IPMT(BUNGA)</th>
-</tr>
-</thead>
-
-<tbody>
-
-<tr>
-<td>cell1_1</td>
-<td>cell2_1</td>
-<td>cell1_1</td>
-<td>cell2_1</td>
-<td>cell3_1</td>
-<td>cell4_1</td>
-<td>cell5_1</td>
-</tr>
-
-</tbody>
-</table>
-
-<!-- /RESULT  -->
-						</div>
- <!--/TAB 1 Active  -->
-
- <!--TAB 2  -->
- <div class="tab-pane fade" id="tab2default">
-						
-            <!-- <form id="form-filter" class="form-horizontal">
-                
-            <div class="form-group">
-                    <label for="TanggalAwal" class="col-sm-2 control-label">Tahun</label>
-                    <div class="col-sm-4">
-                        <select name="tahun" id="tahun" class="form-control">
-                        <option value="2017">2017</option>
-                        <option value="2018">2018</option>
-                        </select>
-
-                    </div>
-                </div>
-      
-                <div class="form-group">
-                    <label for="TanggalAkhir" class="col-sm-2 control-label">Bulan</label>
-                    <div class="col-sm-4">
-                    <select name="bulan" id="bulan" class="form-control">
-                        <option value="1">Januari</option>
-                        <option value="2">Februari</option>
-                        <option value="3">Maret</option>
-                        <option value="4">April</option>
-                        <option value="5">Mei</option>
-                        <option value="6">Juni</option>
-                        <option value="7">Juli</option>
-                        <option value="8">Agustus</option>
-                        <option value="9">September</option>
-                        <option value="10">Oktober</option>
-                        <option value="11">November</option>
-                        <option value="12">Desember</option>
-                        </select>
-                    </div>
-                </div>		
-        
-      
-                <div class="form-group">
-                    <label for="LastName" class="col-sm-2 control-label"></label>
-                    <div class="col-sm-4">
-          
-                        <button type="button" id="generate2" class="btn btn-primary">Generate</button>
-                        <button type="button" id="excel2" class="btn btn-default"><i class="fa fa-file-excel-o"></i></button>
-                    </div>
-                </div>
-
-            </form> -->
-
-
-<form class="form-inline">
-
-<div class="form-group mx-sm-3 mb-2">
-<label for="batch">Batch</label>
-
-                                <select  class="form-control chosen chosen-select-deselect" name="batch_id" id="batch_id" data-placeholder="Select batch" >
-                                    <option value=""></option>
-                                    <?php foreach (db_get_all_data_distinct_batch('system_flpp') as $row): ?>
-                                    <option value="<?= $row->batch_id ?>"><?= $row->batch_id; ?></option>
-                                    <?php endforeach; ?>  
-                                </select>
-
-<!-- <select name="tahun" id="tahun" class="form-control">
-<option value="2017">2017</option>
-<option value="2018">2018</option>
-</select> -->
-
-
-
-</div>
-
-<div class="form-group mx-sm-3 mb-2">
-<!-- <label for="bulan" >Bulan</label>
-<select name="bulan" id="bulan" class="form-control">
-                        <option value="1">Januari</option>
-                        <option value="2">Februari</option>
-                        <option value="3">Maret</option>
-                        <option value="4">April</option>
-                        <option value="5">Mei</option>
-                        <option value="6">Juni</option>
-                        <option value="7">Juli</option>
-                        <option value="8">Agustus</option>
-                        <option value="9">September</option>
-                        <option value="10">Oktober</option>
-                        <option value="11">November</option>
-                        <option value="12">Desember</option>
-                        </select> -->
-
-
-</div>
-<button type="button" id="export_batch" class="btn btn-primary">Export</button>
-</form>
 
 <hr>
 <!-- RESULT  -->
 <div id="result2"></div>
-<!-- <table class="blueTable">
-<thead>
-<tr>
-<th>WILAYAH</th>
-<th>EDC</th>
-<th>YAP</th>
-<th>TOTAL</th>
-<th>#</th>
-</tr>
-</thead>
 
-<tbody>
-<tr>
-<td>cell1_1</td>
-<td>cell2_1</td>
-<td>cell3_1</td>
-<td>cell4_1</td>
-<td>cell5_1</td>
-</tr>
-<tr>
-<td>cell1_2</td>
-<td>cell2_2</td>
-<td>cell3_2</td>
-<td>cell4_2</td>
-<td>cell5_2</td>
-</tr>
-<tr>
-<td>cell1_3</td>
-<td>cell2_3</td>
-<td>cell3_3</td>
-<td>cell4_3</td>
-<td>cell5_3</td>
-</tr>
-</tbody>
-</table> -->
-<!-- /RESULT  -->
 
         </div>
 <!-- /TAB 2  -->
@@ -335,39 +238,6 @@ table.blueTable tfoot td {
 <!-- Main content -->
 
 
-<!-- Modal -->
-            <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
-                <div class="modal-dialog" style="width:800px">
-
-            <!--  -->
-            <!-- <div class="modal-content">
-
-                <div class="modal-header">
-                <center>
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-                    <h4 class="modal-title" id="myModalLabel">Detail report Wilayah '.$wilayah.' </h4>
-                    <h5 class="modal-title" id="myModalLabel">Bulan :  '.$bulan.'  Tahun : '.$tahun.'</h5>
-                </center>
-                </div>
-
-            <div class="modal-body"> -->
-
-            <!--  -->
-            <span class="loading loading-hide">
-            <img src="<?= BASE_ASSET; ?>/img/loading-spin-primary.svg"> 
-            <i><?= cclang('loading_saving_data'); ?></i>
-            </span>
-
-            <div id="result_modal"></div>
-
-            <!--  -->
-            </div>
-
-            </div>
-            <!--  -->
-                </div>
-            </div>
-<!--MODAL-->
 
 
 <!-- Page script -->
@@ -378,10 +248,12 @@ table.blueTable tfoot td {
 const export_batch = document.getElementById('export_batch');
 
 export_batch.addEventListener('click',function(e){
-let export_batch = document.getElementById('batch_id').value;
-let url='<?= site_url('administrator/system_flpp/export_pengembalian/') ?>'+export_batch;
+  let export_batch = document.getElementById('batch_id').value;
+  let type = document.getElementById('type').value;
+let url='<?= site_url('administrator/system_flpp/export_pengembalian/') ?>'+export_batch+'/'+type;
 
-console.log(url);
+// console.log(url);
+// console.log(type);
 location.href = url;
 // alert(export_batch.value);
 // windows.open(url,"_self");

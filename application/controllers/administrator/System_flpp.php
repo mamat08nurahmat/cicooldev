@@ -662,12 +662,78 @@ public function generate($id = null)
 
 }
 
+//form generte
+public function gen(){
+
+
+	// $this->data['no_ktp'] = $ktp;
+
+	$this->template->title('System Flpp Report Generate');
+	$this->render('backend/standart/administrator/system_flpp/system_flpp_generate', $this->data);
+
+
+
+}
+
+
+
+// all generate batch
+public function generate_all($batch_id)
+{
+	// $this->is_allowed('system_flpp_delete');
+
+	// $this->load->helper('file');
+
+
+	// $arr_id = $this->input->get('id');
+	$arr_id = $this->db->query("
+	SELECT ID FROM system_flpp WHERE batch_id=$batch_id
+
+	")->result();
+
+	// print_r($arr_id);die();	
+	foreach ($arr_id as $id) {
+		$remove = $this->_gen($id->ID);
+	}	
+
+	// print_r($remove);die();
+	// $remove = false;
+
+	// if (!empty($id)) {
+	// 	$remove = $this->_gen($id);
+	// } elseif (count($arr_id) >0) {
+	// 	foreach ($arr_id as $id) {
+	// 		$remove = $this->_gen($id);
+	// 	}
+	// }
+
+	// print_r($remove);
+	if ($remove) {
+	// 	// set_message(cclang('has_been_deleted', 'system_flpp'), 'success');
+		echo'<script>
+		alert("succes");
+		window.history.back();
+		</script>';
+	} else {
+	// 	// set_message(cclang('error_delete', 'system_flpp'), 'error');
+		echo'<script>
+		alert("error")
+		window.history.back()
+		</script>';
+	}
+
+	redirect_back();
+
+}
+//all=====
 
 private function _gen($id)
 	{
 		
-
-	$cek['insert_batch1'] =	$this->insert_batch1($id);
+		//insert table pengembalian
+		$cek['insert_batch1'] =	$this->insert_batch1($id);
+		//insert table total
+		$cek['insert_batch3'] =	$this->insert_batch3($id);
 
 	$cek['update_generate'] =	$this->model_system_flpp->change($id,$data=array('is_generate'=>99));
 
@@ -678,6 +744,7 @@ private function _gen($id)
 		// return $this->model_system_flpp->remove($id);
 	}
 
+	//INSERT BATCH PENGEMBALIAN
 	private function insert_batch1($id){
 
 		$system_flpp = $this->model_system_flpp->find($id);
@@ -783,6 +850,192 @@ $data_array[] = array(
 	}
 
 
+//INSERT BATCH table total
+//berdasarkan ID system_flpp
+public function insert_batch3($id){
+
+	$system_flpp = $this->model_system_flpp->find($id);
+
+	// print_r($system_flpp);die();
+	
+	$batch_id= $system_flpp->batch_id;
+
+	$nama_pemohon = $system_flpp->NAMA_PEMOHON;
+	$no_ktp_pemohon = $system_flpp->NO_KTP_PEMOHON;
+	
+	$tenor= $system_flpp->TENOR;
+	$nilai_flpp= $system_flpp->NILAI_FLPP;
+	$nilai_kpr= $system_flpp->NILAI_KPR;
+	
+	// $detail_data = $this->model_app->getSelectedData('upload_verivikasi',$id)->result();
+	//============
+	//$tenor =10;
+	
+	$nilai_kpr = $system_flpp->NILAI_KPR; //nama_pemohon
+	$tgl_akad = $system_flpp->TGL_AKAD; //tgl_akad
+	
+	
+	
+	$bunga_kpr =$system_flpp->SUKU_BUNGA_KPR; //bunga
+//----------------
+//===================================================
+$m_time =   strtotime($tgl_akad);	
+// $y_tenor1 		=  date('Y', strtotime($tgl_akad));
+// $m_tenor1 		=  date('m', strtotime("+1 month", $tgl_akad)); //+1 month bulan berikutnya
+$y_tenor1 =  date('Y', strtotime("+1 months",$m_time));		
+$m_tenor1 =  date('m', strtotime("+1 months",$m_time));
+
+$outstanding_tenor1 = $nilai_kpr;
+$angsuran_pokok_tenor1 = $nilai_kpr*(($bunga_kpr/12)/(1-pow((($bunga_kpr/12)+1),-$tenor)))-($bunga_kpr*($nilai_kpr/12)) ; //=====5
+$angsuran_bunga_tenor1=$nilai_kpr*$bunga_kpr/12; 
+$angsuran_total_tenor1 = $angsuran_pokok_tenor1+$angsuran_bunga_tenor1; 
+
+$data_array[] = array(
+	"no" => 1,
+	"tahun" => $y_tenor1,
+  //  "bulan" =>$nama_bln[$bulan],
+	"bulan" =>$m_tenor1,
+	"outstanding" =>$outstanding_tenor1,
+	"angsuran_pokok" =>$angsuran_pokok_tenor1,
+	"angsuran_bunga" =>$angsuran_bunga_tenor1,
+	"angsuran_total" =>$angsuran_total_tenor1,
+	"no_ktp_pemohon" =>$no_ktp_pemohon,
+	"batch_id" =>$batch_id,
+  
+	);
+//--------------
+
+// print_r($data_array);die();
+
+// TENOR NEXT LOOP
+$no=2;
+// $tenor_loop = $tenor - 1;
+for ($x = 1; $x < $tenor; $x++):
+
+$no = $x+1;
+$z  = $x-1;
+
+// $date = '25/05/2010';
+// $date = str_replace('/', '-', $date);
+// $y =  date('Y', strtotime($date));
+
+// $m_time =   strtotime($date);
+
+$y 		=  date('Y', strtotime($tgl_akad));
+$m_time =   strtotime($tgl_akad);
+
+
+$m2 =  date('m', strtotime("+".$no." months",$m_time));
+$m1 = (string)$m2;            
+// $m1 = '$m1';
+$y1 =  date('Y', strtotime("+".$no." months",$m_time));		
+
+
+$outstanding_before	   = $data_array[$z]['outstanding'];
+$angsuran_pokok_before = $data_array[$z]['angsuran_pokok'];
+
+//------- 
+$outstanding_loop    =((float)$outstanding_before  - (float)$angsuran_pokok_before);
+$angsuran_bunga_loop = $outstanding_loop * ($bunga_kpr/12);
+$angsuran_pokok_loop =$angsuran_total_tenor1 - $angsuran_bunga_loop;
+$angsuran_total_loop = $angsuran_total_tenor1;
+// $outstanding_loop='outstanding_loop';
+// $angsuran_pokok_loop='angsuran_pokok_loop'; ///
+// $angsuran_bunga_loop='angsuran_bunga_loop';
+// $angsuran_total_loop='angsuran_total_loop';
+
+$data_array[] = array(
+	"no" => $no,
+	"tahun" => $y1,
+  //  "bulan" =>$nama_bln[$bulan],
+	"bulan" =>$m1,
+	"outstanding" =>$outstanding_loop,
+	"angsuran_pokok" =>$angsuran_pokok_loop,
+	"angsuran_bunga" =>$angsuran_bunga_loop,
+	"angsuran_total" =>$angsuran_total_loop,
+	"no_ktp_pemohon" =>$no_ktp_pemohon,
+	"batch_id" =>$batch_id,
+  
+	);
+
+
+
+
+
+// $data_array[] = array(	
+// 	// 'BatchID' => $BatchID,
+// 	'NO_KTP_PEMOHON' => $ktp,
+// 	'NO' => $no,
+// 	'Y' => $y1, 
+// 	'M' => baca_bulan($m1), //helper baca bulan 
+// 	'OUTSTANDING' => $outstanding_loop,
+// 	'ANGSURAN_POKOK' => $angsuran_pokok_loop,
+// 	'ANGSURAN_BUNGA' => $angsuran_bunga_loop,
+// 	'ANGSURAN_TOTAL' => $angsuran_total_t1
+	
+			 
+// );
+endfor;
+
+// print_r($data_array);die();
+$sum_outstanding=0;
+$sum_pokok=0;
+$sum_bunga=0;
+$sum_total=0;
+foreach ($data_array as $name => $value) {
+
+
+
+$outstanding = $value['outstanding'];
+$angsuran_pokok = $value['angsuran_pokok'];
+$angsuran_bunga = $value['angsuran_bunga'];
+$angsuran_total = $value['angsuran_total'];
+
+$sum_outstanding += $value['outstanding'];
+$sum_pokok += $value['angsuran_pokok'];
+$sum_bunga += $value['angsuran_bunga'];
+$sum_total += $value['angsuran_total'];
+
+
+// $sum_outstanding1 = number_format(round($sum_outstanding,0),0,',','.');
+// $sum_pokok1 = number_format(round($sum_pokok,0),0,',','.');
+// $sum_bunga1 = number_format(round($sum_bunga,0),0,',','.');
+// $sum_total1 = number_format(round($sum_total,0),0,',','.');
+
+
+
+ $temp_array_detail[] = array(
+
+  "tahun" => $value['tahun'],
+  "bulan" => $value['bulan'],
+  "outstanding" => $outstanding,
+  "angsuran_pokok" => $angsuran_pokok,
+  "angsuran_bunga" => $angsuran_bunga,
+  "angsuran_total" => $angsuran_total,
+  "no_ktp_pemohon" =>$no_ktp_pemohon,
+  "batch_id" =>$batch_id,
+
+
+
+  );
+
+
+}
+
+//cek array
+//print_r($temp_array_detail);
+//die();
+
+// $insert = $this->db->insert_batch('total',$temp_array_detail);
+// ----
+
+	$cek = $this->db->insert_batch('total', $temp_array_detail);
+// print_r($cek);
+return $cek;
+}
+
+
+
 
 	public function report(){
 
@@ -796,8 +1049,92 @@ $data_array[] = array(
 
 	}
 
+	public function report_total($batch_id){
 
-	public function export_pengembalian($batch_id){
+		$data_generate=$this->db->query("
+SELECT
+batch_id,
+bulan,
+tahun,
+sum(outstanding) as outstanding ,
+sum(angsuran_pokok) as angsuran_pokok,
+sum(angsuran_bunga) as angsuran_bunga,
+sum(angsuran_total) as angsuran_total
+FROM total
+WHERE batch_id=$batch_id
+group by batch_id,tahun,bulan
+order by batch_id,tahun
+
+")->result();
+// print_r($data_generate);die();
+
+foreach($data_generate as $value){
+
+	$temp_array_total[] = array(
+	//$angsuran_total = $value->angsuran_total;
+	//$total_dana = 0,9 * $angsuran_total;
+	//$no_ktp_pemohon
+	//  "no" => $no,
+	  "tahun" => $value->tahun,
+	  "bulan" => $value->bulan,
+	  "sum_outstanding" => $value->outstanding,
+	  "sum_angsuran_pokok" => $value->angsuran_pokok,
+	  "sum_angsuran_bunga" => $value->angsuran_bunga,
+	  "total_dana" => bunga() * $value->angsuran_pokok , //---->by (bunga/100) where MONTH AND YEAR from table total
+	//  "angsuran_sisa" => $value->angsuran_sisa,
+	  "batch_id" =>$value->batch_id,
+	
+	  //  "no_ktp_pemohon" => $value['outstanding'],
+	
+	//  "sum_outstanding1" => $angsuran_total,
+	  //"sum_pokok1" => $sum_pokok1,
+	  //"sum_bunga1" => $sum_bunga1,
+	  //"sum_total1" => $sum_total1,
+	
+	  );
+	
+	}
+
+
+	print_r($temp_array_total);die();
+	$table = '';
+	$table .= '
+<table class="table table-bordered table-striped">
+
+    <thead style="background-color: grey;"  >
+	<tr>
+	<td>NO</td>
+	<td colspan="2">BULAN</td>
+	<td>OUTSTANDING POKOK</td>
+	<td>ANGSURAN POKOK</td>
+	<td>ESTIMASI ANGSURAN TARIF</td>
+	<td>SISA POKOK</td>
+	</tr>
+
+	<tr>
+	<td>1</td>
+	<td colspan="2">2</td>
+	<td>3</td>
+	<td>4</td>
+	<td>5</td>
+	<td>6=3-4</td>
+	</tr>
+
+	</thead>
+
+	
+	
+	';
+	// $table .= '';
+
+
+
+	echo $table;
+	
+
+	}
+
+	public function export_pengembalian($batch_id,$type){
 
 		$results=$this->db->query("SELECT * FROM pengembalian WHERE BatchID=$batch_id ORDER BY Y,M,BatchID ")->result();
 		$results_sf =$this->db->query("SELECT * FROM system_flpp WHERE batch_id=$batch_id  ")->result();
@@ -820,6 +1157,18 @@ $data_array[] = array(
 		$table .= '<th>ANGSURAN_KPR</th>';
 		$table .= '<th>NILAI_FLPP</th>';
 		$table .= '<th>TGL_AKAD</th>';
+
+$max_tenor=240;		
+for($i=1;$i<=$max_tenor;$i++){
+			$table .= '<th>'.$i.'</th>';
+
+
+}
+		// if($type='PPMT'){
+		// 	$table .= '<th>PPMT</th>';
+		// }else{
+		// 	$table .= '<th>IPMT</th>';
+		// }
 
 		// foreach($results_sf as $sf):
 		// 	$detail_loop = $this->db->query("SELECT * FROM pengembalian WHERE NO_KTP_PEMOHON=$sf->NO_KTP_PEMOHON")->row();
@@ -846,11 +1195,22 @@ $data_array[] = array(
 		$table .= '<td>'.$sf->ANGSURAN_KPR.'</td>';
 		$table .= '<td>'.$sf->NILAI_FLPP.'</td>';
 		$table .= '<td>'.$sf->TGL_AKAD.'</td>';
+		
 
 					$detail_loop = $this->db->query("SELECT * FROM pengembalian WHERE NO_KTP_PEMOHON=$sf->NO_KTP_PEMOHON")->result();
 
 					foreach($detail_loop as $loop):
-							$table .= '<td>'.$loop->PPMT.'</td>';
+//Tarif FLPP = 75% * (Bunga FLPP/Bunga KPR Sejahtera) * Tarif KPR Sejahtera
+$tarif_flpp = 	(75/100) * ((0.5/100)/(5/100)) * $loop->IPMT;					
+if($type == 'PPMT'){
+	$table .= '<td>'.$loop->PPMT.'</td>';
+}elseif($type == 'IPMT'){
+	$table .= '<td>'.$loop->IPMT.'</td>';
+}else{
+	$table .= '<td>'.$tarif_flpp.'</td>';
+}
+// $table .= '<td>'.$loop->IPMT.'</td>';
+
 					endforeach;
 
 							$table .= '</tr>';
@@ -860,11 +1220,13 @@ $data_array[] = array(
 		
 		$table .= '</table>';
 
-		// echo $table;
+		// echo $table;die();
 
-		$data['table'] = $table;
+
+		// $data['table'] = $table;
 
 		$this->data['table'] = $table;
+		$this->data['nama_file'] = $batch_id.'_'.$type;
 
 		$this->load->view('backend/standart/administrator/system_flpp/system_flpp_export_pengembalian', $this->data);
 
