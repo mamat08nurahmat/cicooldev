@@ -1023,8 +1023,8 @@ $sum_total += $value['angsuran_total'];
 }
 
 //cek array
-//print_r($temp_array_detail);
-//die();
+print_r($temp_array_detail);
+die();
 
 // $insert = $this->db->insert_batch('total',$temp_array_detail);
 // ----
@@ -1096,7 +1096,7 @@ foreach($data_generate as $value){
 	}
 
 
-	print_r($temp_array_total);die();
+	// print_r($temp_array_total);die();
 	$table = '';
 	$table .= '
 <table class="table table-bordered table-striped">
@@ -1126,8 +1126,65 @@ foreach($data_generate as $value){
 	
 	';
 	// $table .= '';
+// loop
+$nama_bln=array(1=>'January','Februari','Maret','April','Mei','Juni','Juli','Agustus','September','Oktober','Nopember','Desember','januari');
+//print_r($data_generate[0]['total_dana']);
+//-------------
+//tr looping
+$no=1;
+$sum_angsuran_pokok1=0;
+$sum_estimasi_angsuran_tarif1=0;
+
+//print_r($data_generate);die();
+foreach($temp_array_total as  $row ):
+//print_r($row['bulan']);
+
+	$outstanding_pokok ="Rp. ".number_format(round($row['sum_outstanding'],9),0,',','.');
+	$angsuran_pokok ="Rp. ".number_format(round($row['total_dana'],9),0,',','.');
+	$estimasi_angsuran_tarif ="Rp. ".number_format(round($row['sum_angsuran_bunga'],9),0,',','.');
+	$sisa_pokok ="Rp. ".number_format(round($row['sum_outstanding']-$row['total_dana'],9),0,',','.');
+
+$sum_angsuran_pokok1 +=round($row['total_dana'],9);
+
+$sum_estimasi_angsuran_tarif1 +=round($row['sum_angsuran_bunga'],9);
 
 
+	$sum_angsuran_pokok ="Rp. ".number_format($sum_angsuran_pokok1,0,',','.');
+	$sum_estimasi_angsuran_tarif ="Rp. ".number_format($sum_estimasi_angsuran_tarif1,0,',','.');
+// ----
+
+$table.='<tbody>';
+
+$table .='
+<tr class="gradeX">
+<td>'.$no++.'</td>
+<td>'.$row["tahun"].'</td>
+<td>'.$nama_bln[$row["bulan"]].'</td>
+<td>'.$outstanding_pokok.'</td>
+<td>'.$angsuran_pokok.'</td>
+<td>'.$estimasi_angsuran_tarif.'</td>
+<td>'.$sisa_pokok.'</td>
+</tr>
+
+';
+endforeach;
+// loop
+$table.='
+
+
+
+<tr>
+<td colspan="4">TOTAL</td>
+
+<td>'.$sum_angsuran_pokok.'</td>
+<td>'.$sum_estimasi_angsuran_tarif.'</td>
+
+<td></td>
+
+</tr>
+';
+
+$table.='</tbody>';
 
 	echo $table;
 	
