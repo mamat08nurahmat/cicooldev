@@ -507,24 +507,25 @@ $this->form_validation->set_rules('IS_APPROVED', 'IS APPROVED', 'trim|required|m
 			
 			$xxx = '"'; //!!!!!!!!!
 			$lokasi_csv='C:/xampp/htdocs/mismer/uploads/systemupload/'.$systemupload->BatchID.'-'.$systemupload->ApplicationSource.'.csv';
-
+			// $lokasi_csv=base_url('/uploads/systemupload/').$systemupload->BatchID.'-'.$systemupload->ApplicationSource.'.csv';
+// print_r($lokasi_csv);die();
 // $truncate = $this->db->query('truncate templateuploadmismer');
 // $xxx = '"';
 // $lokasi_csv='C:/xampp/htdocs/mismer/sample_csv/DevUploadMismer.csv';
 
-$set = "(MID,MERCHAN_DBA_NAME,STAT
-US_EDC,@OPEN_DATE,MSO,SOURCE_CODE,POS1,IS_VALID,ID)
-SET OPEN_DATE = STR_TO_DATE(@OPEN_DATE, '%m/%d/%Y')";
+// $set = "(MID,MERCHAN_DBA_NAME,STAT
+// US_EDC,@OPEN_DATE,MSO,SOURCE_CODE,POS1,IS_VALID,ID)
+// SET OPEN_DATE = STR_TO_DATE(@OPEN_DATE, '%m/%d/%Y')";
 
 $res1 = $this->db->query("
 LOAD DATA INFILE '$lokasi_csv' 
 INTO TABLE templateuploadmismer
 FIELDS TERMINATED BY ',' 
-ENCLOSED BY '$xxx' 
+ENCLOSED BY '$xxx'
 LINES TERMINATED BY '\n'
  IGNORE 1 ROWS
- ".$set."
- ;
+(MID,MERCHAN_DBA_NAME,STATUS_EDC,@OPEN_DATE,MSO,SOURCE_CODE,POS1,IS_VALID,ID)
+SET OPEN_DATE = STR_TO_DATE(@OPEN_DATE, '%m/%d/%Y')
  ");
 
 //  if($res1){

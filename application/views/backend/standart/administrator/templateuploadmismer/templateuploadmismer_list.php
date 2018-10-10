@@ -146,6 +146,7 @@ jQuery(document).ready(domo);
                      <div class="col-sm-2 padd-left-0 " >
                         <select type="text" class="form-control chosen chosen-select" name="bulk" id="bulk" placeholder="Site Email" >
                            <option value="">Bulk</option>
+                           <option value="generate">Generate</option>
                            <option value="delete">Delete</option>
                         </select>
                      </div>
@@ -272,7 +273,34 @@ jQuery(document).ready(domo);
 
         return false;
 
-      } else if(bulk.val() == '')  {
+      }else
+      
+      // generate
+      if (bulk.val() == 'generate') {
+         swal({
+            title: "<?= cclang('are_you_sure'); ?>",
+            text: "<?= cclang('generate???'); ?>",
+            type: "warning",
+            showCancelButton: true,
+            confirmButtonColor: "#DD6B55",
+            confirmButtonText: "<?= cclang('yes'); ?>",
+            cancelButtonText: "<?= cclang('no'); ?>",
+            closeOnConfirm: true,
+            closeOnCancel: true
+          },
+          function(isConfirm){
+            if (isConfirm) {
+               document.location.href = BASE_URL + '/administrator/templateuploadmismer/generate?' + serialize_bulk;      
+            }
+          });
+
+        return false;
+
+      }
+      // generate
+      
+      
+       else if(bulk.val() == '')  {
           swal({
             title: "Upss",
             text: "<?= cclang('please_choose_bulk_action_first'); ?>",

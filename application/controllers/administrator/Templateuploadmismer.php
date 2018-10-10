@@ -618,6 +618,159 @@ ORDER BY MID ASC LIMIT 100
 
 		$this->model_templateuploadmismer->pdf('templateuploadmismer', 'templateuploadmismer');
 	}
+
+//================================
+
+// ============generate all===
+public function gen_all(){
+// get all id templateuploadmismer
+print_r('generate all');die();
+}
+
+// generate by checkbox===========================
+public function generate($id = null)
+{
+	// $this->is_allowed('templateuploadmismer_delete');
+
+	$this->load->helper('file');
+
+	$arr_id = $this->input->get('id');
+	$remove = false;
+
+	if (!empty($id)) {
+		$generate = $this->_generate($id);
+	} elseif (count($arr_id) >0) {
+		foreach ($arr_id as $id) {
+			$generate = $this->_generate($id);
+		}
+	}
+
+	if ($generate) {
+		set_message(cclang('has_been_generate', 'templateuploadmismer'), 'success');
+	} else {
+		set_message(cclang('error_generate', 'templateuploadmismer'), 'error');
+	}
+
+	redirect_back();
+}
+
+// generate single
+
+private function _generate($id)
+{
+	$templateuploadmismer = $this->model_templateuploadmismer->find($id);
+// print_r($templateuploadmismer);die();
+// act generate	
+$del = 			$this->db->query("DELETE FROM mismerdetail WHERE MID='$templateuploadmismer->MID'");
+
+$res = 			$this->db->query("
+	INSERT INTO mismerdetail
+
+	SELECT 
+	NULL RowID,
+	-- a.RowID,
+	-- (SELECT max(BatchID) as BatchID FROM systemupload) BatchID,
+	999 BatchID,
+	
+	--  date_format(str_to_date(a.OPEN_DATE,'%m/%d/%Y'),'%Y/%m/%d')
+	-- AS OPEN_DATE , 
+	
+	a.OPEN_DATE,
+	
+	
+	a.MID,
+	a.MERCHAN_DBA_NAME,
+	a.MSO,
+	a.SOURCE_CODE,
+	
+	CASE
+		WHEN a.POS1 <= 100 THEN 1
+		ELSE LEFT(a.POS1,1)
+	END
+	AS
+	POS1,
+	
+	CASE
+		WHEN LEFT(a.MSO,1)='A' THEN 'WMD'
+		WHEN LEFT(a.MSO,1)='B' THEN 'WPD'
+		WHEN LEFT(a.MSO,1)='C' THEN 'WPL'
+		WHEN LEFT(a.MSO,1)='D' THEN 'WBN'
+		WHEN LEFT(a.MSO,1)='E' THEN 'WSM'
+		WHEN LEFT(a.MSO,1)='F' THEN 'WSY'
+		WHEN LEFT(a.MSO,1)='G' THEN 'WMK'
+		WHEN LEFT(a.MSO,1)='H' THEN 'WDR'
+		WHEN LEFT(a.MSO,1)='I' THEN 'WBJ'
+		WHEN LEFT(a.MSO,1)='J' THEN 'WMO'
+		WHEN LEFT(a.MSO,1)='K' THEN 'WPU'
+		WHEN LEFT(a.MSO,1)='L' THEN 'WJS'
+		WHEN LEFT(a.MSO,1)='M' THEN 'WJK'
+		WHEN LEFT(a.MSO,1)='N' THEN 'WJB'
+		WHEN LEFT(a.MSO,1)='O' THEN 'WJY'
+		WHEN LEFT(a.MSO,1)='R' THEN 'WYK'
+		WHEN LEFT(a.MSO,1)='S' THEN 'WMA'	
+		
+		WHEN SUBSTRING(a.MID,2,2)='01' THEN 'WMD'
+		WHEN SUBSTRING(a.MID,2,2)='02' THEN 'WPD'
+		WHEN SUBSTRING(a.MID,2,2)='03' THEN 'WPL'
+		WHEN SUBSTRING(a.MID,2,2)='04' THEN 'WBN'
+		WHEN SUBSTRING(a.MID,2,2)='05' THEN 'WSM'
+		WHEN SUBSTRING(a.MID,2,2)='06' THEN 'WSY'
+		WHEN SUBSTRING(a.MID,2,2)='07' THEN 'WMK'
+		WHEN SUBSTRING(a.MID,2,2)='08' THEN 'WDR'
+		WHEN SUBSTRING(a.MID,2,2)='09' THEN 'WBJ'
+		WHEN SUBSTRING(a.MID,2,2)='10' THEN 'WJS'
+		WHEN SUBSTRING(a.MID,2,2)='11' THEN 'WMO'
+		WHEN SUBSTRING(a.MID,2,2)='12' THEN 'WJK'
+		WHEN SUBSTRING(a.MID,2,2)='14' THEN 'WJB'
+		WHEN SUBSTRING(a.MID,2,2)='15' THEN 'WJY'
+		WHEN SUBSTRING(a.MID,2,2)='16' THEN 'WPU'
+		WHEN SUBSTRING(a.MID,2,2)='17' THEN 'WYK'
+		WHEN SUBSTRING(a.MID,2,2)='18' THEN 'WMA'    
+		
+	-- 	WHEN LEFT(a.MSO,1)='' THEN 'BLANK'
+		  ELSE NULL
+	END
+	
+	as WILAYAH,
+	
+	
+	mc.Channel as CHANNEL,
+	 
+	
+	 
+	 
+	 CASE
+	
+		WHEN LEFT(a.MID,1)='3'  THEN 'YAP'
+	
+		  ELSE 'EDC'
+	END
+	
+	as TYPE_MID
+	
+	 
+	
+	FROM templateuploadmismer a 
+	
+	LEFT JOIN mso_channel mc ON a.MSO=mc.MSO
+	
+	WHERE a.ID='$templateuploadmismer->ID' 			
+	
+	");
+
+
+	print_r($templateuploadmismer);
+	print_r('<hr>');
+	print_r($del);
+	print_r('<hr>');
+	print_r($res);
+
+die();
+	// return $this->model_mismerdetail->remove($id);
+}
+
+
+
 }
 
 
