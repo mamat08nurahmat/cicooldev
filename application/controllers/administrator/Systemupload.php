@@ -490,6 +490,32 @@ $this->form_validation->set_rules('IS_APPROVED', 'IS APPROVED', 'trim|required|m
 		$this->model_systemupload->pdf('systemupload', 'systemupload');
 	}
 
+	public function reset_approve($BatchID){
+
+	$save_data = [
+		// 'FileSize' => $this->input->post('FileSize'),
+		// 'ReportPath' => $this->input->post('ReportPath'),
+		// 'RowDataCount' => $this->input->post('RowDataCount'),
+		// 'RowDataSucceed' => $RowDataSucceed,
+		// 'RowDataFailed' => $RowDataFailed,
+		// 'ApprovalID' => $this->input->post('ApprovalID'),
+		'IS_APPROVED' => 0,
+	];
+	$save_systemupload = $this->model_systemupload->change($BatchID, $save_data);
+	
+	if($save_systemupload){
+
+echo'
+<script>
+alert("reset success");
+</script>
+
+';
+redirect(site_url('administrator/systemupload'),'refresh');		
+
+	}
+
+	}
 // ---dev
 	public function view_temp($BatchID){
 
@@ -506,7 +532,11 @@ $this->form_validation->set_rules('IS_APPROVED', 'IS APPROVED', 'trim|required|m
 			$truncate = $this->db->query('truncate templateuploadmismer');
 			
 			$xxx = '"'; //!!!!!!!!!
+<<<<<<< HEAD
 			$lokasi_csv='C:/xampp/htdocs/mismer/uploads/systemupload/'.$systemupload->BatchID.'-'.$systemupload->ApplicationSource.'.csv';
+=======
+			$lokasi_csv='C:/xampp/htdocs/cicooldev/uploads/systemupload/'.$systemupload->BatchID.'-'.$systemupload->ApplicationSource.'.csv';
+>>>>>>> ada2f086ef4ab2d082bf2654696547dae4ee75a1
 
 // $truncate = $this->db->query('truncate templateuploadmismer');
 // $xxx = '"';
@@ -527,6 +557,31 @@ LINES TERMINATED BY '\n'
  ;
  ");
 
+<<<<<<< HEAD
+=======
+//UPDATE rowsucces di tabel systemupload
+$Succeed = $this->db->query("SELECT COUNT(*) as RowDataSucceed from templateuploadmismer")->row();
+$RowDataSucceed = $Succeed->RowDataSucceed;
+// $RowDataFailed = $RowDataCount - $RowDataSucceed; //next RowDataCount???   
+$RowDataFailed = 0; //hardcode 
+// !!!!! 
+$save_data = [
+	// 'FileSize' => $this->input->post('FileSize'),
+	// 'ReportPath' => $this->input->post('ReportPath'),
+	// 'RowDataCount' => $this->input->post('RowDataCount'),
+	'RowDataSucceed' => $RowDataSucceed,
+	'RowDataFailed' => $RowDataFailed,
+	// 'ApprovalID' => $this->input->post('ApprovalID'),
+	'IS_APPROVED' => 1,
+];
+$save_systemupload = $this->model_systemupload->change($BatchID, $save_data);
+/*
+*/
+
+
+
+
+>>>>>>> ada2f086ef4ab2d082bf2654696547dae4ee75a1
 //  if($res1){
 	$ApplicationSource = strtolower($systemupload->ApplicationSource);
 	redirect(site_url('administrator/templateupload'.$ApplicationSource.''),'refresh');		
@@ -538,7 +593,11 @@ LINES TERMINATED BY '\n'
 
 	$truncate = $this->db->query('truncate templateuploadunmatch');
 	$xxx = '"'; //!!!!!!!!!
+<<<<<<< HEAD
 	$lokasi_csv='C:/xampp/htdocs/mismer/uploads/systemupload/'.$systemupload->BatchID.'-'.$systemupload->ApplicationSource.'.csv';
+=======
+	$lokasi_csv='C:/xampp/htdocs/cicooldev/uploads/systemupload/'.$systemupload->BatchID.'-'.$systemupload->ApplicationSource.'.csv';
+>>>>>>> ada2f086ef4ab2d082bf2654696547dae4ee75a1
 
 	
 	// $truncate = $this->db->query('truncate templateuploadmismer');
@@ -593,10 +652,13 @@ foreach ($csvData as $key => $row) {
 	// print_r('<hr>');	
 	// print_r($row[0]);
 	// print_r('<hr>');	
+<<<<<<< HEAD
 // $data_upload = array(
 
 	
 // )
+=======
+>>>>>>> ada2f086ef4ab2d082bf2654696547dae4ee75a1
 
 }
 

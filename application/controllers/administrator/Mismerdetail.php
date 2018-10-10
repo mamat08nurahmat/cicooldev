@@ -1045,6 +1045,7 @@ public function getModalResult2($tahun,$bulan,$wilayah){
 	
 	echo $tabel;
 	}
+<<<<<<< HEAD
 	
 
 // EXPORT
@@ -1169,6 +1170,268 @@ $jumlah =$r->JUMLAH_EDC+$r->JUMLAH_YAP;
 
  }
 
+=======
+
+	
+// DASHBOARD
+	public function getDashboard(){
+
+
+
+		$query = $this->db->query('
+
+		SELECT
+				
+		WILAYAH,
+		SUM(IFNULL(JUMLAH_YAP,0)) JUMLAH_YAP,
+		SUM(IFNULL(JUMLAH_EDC,0)) JUMLAH_EDC,
+		-- 		BULAN,
+		-- 		TAHUN
+		EXTRACT(MONTH FROM OPEN_DATE) AS BULAN,
+		EXTRACT(YEAR FROM OPEN_DATE) AS TAHUN,
+		OPEN_DATE
+		
+		from
+		(
+		
+		select
+		a.WILAYAH,
+		sum(IFNULL(a.JUMLAH,0)) JUMLAH_YAP,
+		0 JUMLAH_EDC,
+		-- 		a.BULAN,
+		-- 		a.TAHUN
+		a.OPEN_DATE
+		
+		from
+		VW_YAP2 a left join VW_EDC2 b
+		on a.wilayah = b.wilayah and a.channel = b.channel and a.OPEN_DATE=b.OPEN_DATE -- a.bulan = b.bulan and a.tahun = b.tahun
+		group by a.WILAYAH,a.OPEN_DATE -- a.BULAN,a.TAHUN
+		
+		union
+		
+		select
+		a.WILAYAH,
+		sum(IFNULL(b.JUMLAH,0)) JUMLAH_YAP,
+		sum(IFNULL(a.JUMLAH,0)) JUMLAH_EDC,
+		-- 		a.BULAN,
+		-- 		a.TAHUN
+		a.OPEN_DATE
+		from
+		VW_EDC2 a left join VW_YAP2 b
+		on a.wilayah = b.wilayah and a.channel = b.channel and a.OPEN_DATE=b.OPEN_DATE -- a.bulan = b.bulan and a.tahun = b.tahun
+		group by a.WILAYAH,a.OPEN_DATE -- a.BULAN,a.TAHUN
+		
+		
+		-- UNION UNMATCH
+		
+		union
+		
+		SELECT 
+		mu.WILAYAH AS WILAYAH,
+		0 JUMLAH_YAP,
+		SUM(mu.POS1) AS JUMLAH_EDC,
+		-- EXTRACT(MONTH FROM mu.OPEN_DATE) AS BULAN,
+		--  EXTRACT(YEAR FROM mu.OPEN_DATE) AS TAHUN
+		mu.OPEN_DATE
+		FROM
+		mismerunmatch mu
+		-- LEFT JOIN channel ch ON tu.CHANNEL = ch.ID 
+		WHERE mu.IS_UPDATE=1
+		GROUP BY mu.WILAYAH ,mu.OPEN_DATE 
+		
+		
+		
+		
+		)a
+		GROUP BY WILAYAH
+		')->result();
+		
+		
+		$table = array();
+		$table['cols'] = array(
+			/* Disini kita mendefinisikan fata pada tabel database
+			 * masing-masing kolom akan kita ubah menjadi array
+			 * Kolom tersebut adalah parameter (string) dan nilai (integer/number)
+			 * Pada bagian ini kita juga memberi penamaan pada hasil chart nanti
+			 */
+			// array('label' => 'npp', 'type' => 'string'),
+			// array('label' => 'performance', 'type' => 'number')
+			array('label' => 'WILAYAH', 'type' => 'string'),
+			array('label' => 'JUMLAH_EDC', 'type' => 'number'),
+			array('label' => 'JUMLAH_YAP', 'type' => 'number')
+			
+		);
+		// melakukan query yang akan menampilkan array data
+		$rows = array();
+		// while($r = mysql_fetch_assoc($query)) {
+			
+			foreach($query as $r){			
+				$temp = array();
+				// masing-masing kolom kita masukkan sebagai array sementara
+				$temp[] = array('v' => $r->WILAYAH);
+				$temp[] = array('v' => (int) $r->JUMLAH_EDC);
+				$temp[] = array('v' => (int) $r->JUMLAH_YAP);
+				$rows[] = array('c' => $temp);
+			}
+			// mempopulasi row tabel
+			$table['rows'] = $rows;
+			/*
+			*/		
+		
+
+
+
+// encode tabel ke bentuk json
+$jsonTable = json_encode($table);
+// set up header untuk JSON, wajib.
+// header('Cache-Control: no-cache, must-revalidate');
+// header('Expires: Mon, 26 Jul 1997 05:00:00 GMT');
+// header('Content-type: application/json');
+// menampilkan data h
+echo $jsonTable;
+
+
+
+	}
+
+
+// --------------
+public function getdata() 
+        { 
+        // $data = $this->Our_chart_model->get_all_fruits(); 
+ 
+		$data = $this->db->query('
+
+		SELECT
+				
+		WILAYAH,
+		SUM(IFNULL(JUMLAH_YAP,0)) JUMLAH_YAP,
+		SUM(IFNULL(JUMLAH_EDC,0)) JUMLAH_EDC,
+		-- 		BULAN,
+		-- 		TAHUN
+		EXTRACT(MONTH FROM OPEN_DATE) AS BULAN,
+		EXTRACT(YEAR FROM OPEN_DATE) AS TAHUN,
+		OPEN_DATE
+		
+		from
+		(
+		
+		select
+		a.WILAYAH,
+		sum(IFNULL(a.JUMLAH,0)) JUMLAH_YAP,
+		0 JUMLAH_EDC,
+		-- 		a.BULAN,
+		-- 		a.TAHUN
+		a.OPEN_DATE
+		
+		from
+		VW_YAP2 a left join VW_EDC2 b
+		on a.wilayah = b.wilayah and a.channel = b.channel and a.OPEN_DATE=b.OPEN_DATE -- a.bulan = b.bulan and a.tahun = b.tahun
+		group by a.WILAYAH,a.OPEN_DATE -- a.BULAN,a.TAHUN
+		
+		union
+		
+		select
+		a.WILAYAH,
+		sum(IFNULL(b.JUMLAH,0)) JUMLAH_YAP,
+		sum(IFNULL(a.JUMLAH,0)) JUMLAH_EDC,
+		-- 		a.BULAN,
+		-- 		a.TAHUN
+		a.OPEN_DATE
+		from
+		VW_EDC2 a left join VW_YAP2 b
+		on a.wilayah = b.wilayah and a.channel = b.channel and a.OPEN_DATE=b.OPEN_DATE -- a.bulan = b.bulan and a.tahun = b.tahun
+		group by a.WILAYAH,a.OPEN_DATE -- a.BULAN,a.TAHUN
+		
+		
+		-- UNION UNMATCH
+		
+		union
+		
+		SELECT 
+		mu.WILAYAH AS WILAYAH,
+		0 JUMLAH_YAP,
+		SUM(mu.POS1) AS JUMLAH_EDC,
+		-- EXTRACT(MONTH FROM mu.OPEN_DATE) AS BULAN,
+		--  EXTRACT(YEAR FROM mu.OPEN_DATE) AS TAHUN
+		mu.OPEN_DATE
+		FROM
+		mismerunmatch mu
+		-- LEFT JOIN channel ch ON tu.CHANNEL = ch.ID 
+		WHERE mu.IS_UPDATE=1
+		GROUP BY mu.WILAYAH ,mu.OPEN_DATE 
+		
+		
+		
+		
+		)a
+		GROUP BY WILAYAH
+		')->result();
+
+
+        //         //data to json 
+ 
+        $responce->cols[] = array( 
+            "id" => "", 
+            "label" => "WILAYAH", 
+            "pattern" => "", 
+            "type" => "string" 
+		);
+		 
+        $responce->cols[] = array( 
+            "id" => "", 
+            "label" => "JUMLAH_YAP", 
+            "pattern" => "", 
+            "type" => "number" 
+		); 
+		
+        $responce->cols[] = array( 
+            "id" => "", 
+            "label" => "JUMLAH_EDC", 
+            "pattern" => "", 
+            "type" => "number" 
+		); 
+		
+        foreach($data as $cd) 
+            { 
+            $responce->rows[]["c"] = array( 
+                array( 
+                    "v" => "$cd->WILAYAH", 
+                    "f" => null 
+                ) , 
+                array( 
+                    "v" => (int)$cd->JUMLAH_YAP, 
+                    "f" => null 
+                ) , 
+                array( 
+                    "v" => (int)$cd->JUMLAH_EDC, 
+                    "f" => null 
+                ) 
+            ); 
+            } 
+ 
+		echo json_encode($responce);
+		 
+		// header('Cache-Control: no-cache, must-revalidate');
+		// header('Expires: Mon, 26 Jul 1997 05:00:00 GMT');
+		// header('Content-type: application/json');
+		
+        } 
+
+// ----------
+		public function dashboard(){
+
+			$this->template->title('Mismerdetail DASHBOARD');
+			$this->render('backend/standart/administrator/mismerdetail/dashboard', $this->data);
+		}
+
+
+		public function map(){
+
+			$this->template->title('Mismerdetail DASHBOARD');
+			$this->render('backend/standart/administrator/mismerdetail/map', $this->data);
+		}
+>>>>>>> ada2f086ef4ab2d082bf2654696547dae4ee75a1
 
 
 
