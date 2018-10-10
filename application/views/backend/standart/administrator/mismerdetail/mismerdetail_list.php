@@ -52,6 +52,12 @@ jQuery(document).ready(domo);
                   <!-- Add the bg color to the header using any of the bg-* classes -->
                   <div class="widget-user-header ">
                      <div class="row pull-right">
+
+                        <?php is_allowed('templateuploadmismer_add', function(){?>
+                        <a class="btn btn-flat btn-danger btn_add_generate" id="btn_generate"  href="<?=  site_url('administrator/mismerdetail/update_unmatch'); ?>"><i class="fa fa-gear" ></i> UPDATE UNMATCH</a>
+                        <?php }) ?>
+<!-- //  -->
+
                         <?php is_allowed('mismerdetail_add', function(){?>
                         <a class="btn btn-flat btn-success btn_add_new" id="btn_add_new" title="<?= cclang('add_new_button', ['Mismerdetail']); ?>  (Ctrl+a)" href="<?=  site_url('administrator/mismerdetail/add'); ?>"><i class="fa fa-plus-square-o" ></i> <?= cclang('add_new_button', ['Mismerdetail']); ?></a>
                         <?php }) ?>
@@ -114,12 +120,12 @@ jQuery(document).ready(domo);
                               <?php is_allowed('mismerdetail_view', function() use ($mismerdetail){?>
                               <a href="<?= site_url('administrator/mismerdetail/view/' . $mismerdetail->RowID); ?>" class="label-default"><i class="fa fa-newspaper-o"></i> <?= cclang('view_button'); ?>
                               <?php }) ?>
-                              <?php is_allowed('mismerdetail_update', function() use ($mismerdetail){?>
+                              <!-- <?php is_allowed('mismerdetail_update', function() use ($mismerdetail){?>
                               <a href="<?= site_url('administrator/mismerdetail/edit/' . $mismerdetail->RowID); ?>" class="label-default"><i class="fa fa-edit "></i> <?= cclang('update_button'); ?></a>
                               <?php }) ?>
                               <?php is_allowed('mismerdetail_delete', function() use ($mismerdetail){?>
                               <a href="javascript:void(0);" data-href="<?= site_url('administrator/mismerdetail/delete/' . $mismerdetail->RowID); ?>" class="label-default remove-data"><i class="fa fa-close"></i> <?= cclang('remove_button'); ?></a>
-                               <?php }) ?>
+                               <?php }) ?> -->
                            </td>
                         </tr>
                       <?php endforeach; ?>

@@ -1,11 +1,66 @@
 <?php
 
+if(!function_exists('readCSV')) {
+
+function readCSV($file)
+{
+  $row      = 0;
+  $csvArray = array();
+  if( ( $handle = fopen($file, "r") ) !== FALSE ) {
+    while( ( $data = fgetcsv($handle, 0, ",") ) !== FALSE ) {
+      $num = count($data);
+      for( $c = 0; $c < $num; $c++ ) {
+        $csvArray[$row][] = $data[$c];
+      }
+      $row++;
+    }
+  }
+  if( !empty( $csvArray ) ) {
+    // return $csvArray; //cut off the first row (names of the fields)
+    return array_splice($csvArray, 1); //cut off the first row (names of the fields)
+  } else {
+    return false;
+  }
+}
+
+}
+
+//baca bulan
+if(!function_exists('baca_bulan')) {
+	function baca_bulan($bulan_ke) {
+
+		$nama_bulan = array(
+			'1' => 'Januari',
+			'2' => 'Februari',
+			'3' => 'Maret',
+			'4' => 'April',
+			'5' => 'Mei',
+			'6' => 'Juni',
+			'7' => 'Juli',
+			'8' => 'Agustus',
+			'9' => 'September',
+			'10' => 'Oktober',
+			'11' => 'November',
+			'12' => 'Desember',
+		);
+
+return $nama_bulan[$bulan_ke];
+
+	}
+}
+
 if(!function_exists('get_batchid')) {
 	function get_batchid() {
 		$ci =& get_instance();
 	
 		  $query = $ci->db->query("
-			SELECT MAX(BatchID+1) as BatchID FROM systemupload
+		  SELECT 
+		  CASE
+		  WHEN BatchID IS NULL THEN 1
+		  ELSE MAX(BatchID+1) 
+		  END
+		  AS BatchID 
+		  FROM systemupload
 		  ")->row();
 
 	    return $query->BatchID;
@@ -1010,7 +1065,9 @@ if (!function_exists('get_current_initial_lang'))
 if (!function_exists('get_geolocation')) {
     
     function get_geolocation($ip) {
-		$details = json_decode(file_get_contents("http://ipinfo.io/{$ip}"));
+		// $details = json_decode(file_get_contents("http://ipinfo.io/{$ip}"));
+
+		$details = json_decode(file_get_contents("http://ipinfo.io/140.213.42.23"));
 
 		if (isset($details->country)) {
 			return strtolower($details->country);

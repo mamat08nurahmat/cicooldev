@@ -24,25 +24,25 @@ class MY_Controller extends CI_Controller {
 
         $this->load->helper(['cookie']);
 
-        if ($lang = get_cookie('language')) {
+        // if ($lang = get_cookie('language')) {
 
-            $this->lang->load([
-                'web',
-                'form_validation',
-                'upload',
-                'db',
-            ], $lang);
-        } else {
-            $lang = get_lang_by_ip($this->input->ip_address());
+        //     $this->lang->load([
+        //         'web',
+        //         'form_validation',
+        //         'upload',
+        //         'db',
+        //     ], $lang);
+        // } else {
+        //     $lang = get_lang_by_ip($this->input->ip_address());
 
-            $this->lang->load([
-                'web',
-                'form_validation',
-                'upload',
-                'db',
-            ], $lang);
-            set_cookie('language', $lang, (60 * 60 * 24) * 365 );
-        }
+        //     $this->lang->load([
+        //         'web',
+        //         'form_validation',
+        //         'upload',
+        //         'db',
+        //     ], $lang);
+        //     set_cookie('language', $lang, (60 * 60 * 24) * 365 );
+        // }
 
         if (installation_complete()) {
             date_default_timezone_set(get_option('timezone', 'asia/jakarta'));

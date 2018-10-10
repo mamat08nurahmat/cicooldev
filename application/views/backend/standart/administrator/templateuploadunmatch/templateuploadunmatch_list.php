@@ -139,11 +139,11 @@ jQuery(document).ready(domo);
                      <div class="col-sm-2 padd-left-0 " >
                         <select type="text" class="form-control chosen chosen-select" name="bulk" id="bulk" placeholder="Site Email" >
                            <option value="">Bulk</option>
-                           <option value="delete">Delete</option>
+                           <option value="delete">Generate</option>
                         </select>
                      </div>
                      <div class="col-sm-2 padd-left-0 ">
-                        <button type="button" class="btn btn-flat" name="apply" id="apply" title="<?= cclang('apply_bulk_action'); ?>"><?= cclang('apply_button'); ?></button>
+                        <button type="button" class="btn btn-danger" name="apply" id="apply" title="<?= cclang('apply_bulk_action'); ?>">APPLY GENERATE</button>
                      </div>
                      <div class="col-sm-3 padd-left-0  " >
                         <input type="text" class="form-control" name="q" id="filter" placeholder="<?= cclang('filter'); ?>" value="<?= $this->input->get('q'); ?>">
@@ -225,11 +225,11 @@ jQuery(document).ready(domo);
       if (bulk.val() == 'delete') {
          swal({
             title: "<?= cclang('are_you_sure'); ?>",
-            text: "<?= cclang('data_to_be_deleted_can_not_be_restored'); ?>",
+            text: "<?= cclang('data_unmatch_update'); ?>",
             type: "warning",
             showCancelButton: true,
             confirmButtonColor: "#DD6B55",
-            confirmButtonText: "<?= cclang('yes_delete_it'); ?>",
+            confirmButtonText: "<?= cclang('yes_update_it'); ?>",
             cancelButtonText: "<?= cclang('no_cancel_plx'); ?>",
             closeOnConfirm: true,
             closeOnCancel: true

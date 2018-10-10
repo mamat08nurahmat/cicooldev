@@ -52,6 +52,13 @@ jQuery(document).ready(domo);
                   <!-- Add the bg color to the header using any of the bg-* classes -->
                   <div class="widget-user-header ">
                      <div class="row pull-right">
+                     
+
+
+                        <?php is_allowed('templateuploadmismer_add', function(){?>
+                        <a class="btn btn-flat btn-danger approve-data" id="btn_generate" href="javascript:void(0);" data-href="<?=  site_url('administrator/templateuploadmismer/generate_all'); ?>"><i class="fa fa-gear" ></i> GENERATE</a>
+                        <?php }) ?>
+<!-- //  
                         <?php is_allowed('templateuploadmismer_add', function(){?>
                         <a class="btn btn-flat btn-success btn_add_new" id="btn_add_new" title="<?= cclang('add_new_button', ['Templateuploadmismer']); ?>  (Ctrl+a)" href="<?=  site_url('administrator/templateuploadmismer/add'); ?>"><i class="fa fa-plus-square-o" ></i> <?= cclang('add_new_button', ['Templateuploadmismer']); ?></a>
                         <?php }) ?>
@@ -61,6 +68,8 @@ jQuery(document).ready(domo);
                         <?php is_allowed('templateuploadmismer_export', function(){?>
                         <a class="btn btn-flat btn-success" title="<?= cclang('export'); ?> pdf Templateuploadmismer" href="<?= site_url('administrator/templateuploadmismer/export_pdf'); ?>"><i class="fa fa-file-pdf-o" ></i> <?= cclang('export'); ?> PDF</a>
                         <?php }) ?>
+-->
+
                      </div>
                      <div class="widget-user-image">
                         <img class="img-circle" src="<?= BASE_ASSET; ?>/img/list.png" alt="User Avatar">
@@ -188,7 +197,31 @@ jQuery(document).ready(domo);
 <!-- Page script -->
 <script>
   $(document).ready(function(){
-   
+
+    $('.approve-data').click(function(){
+
+    var url = $(this).attr('data-href');
+
+    swal({
+        title: "<?= cclang('are_you_sure'); ?>",
+        text: "<?= cclang('data_to_be_deleted_can_not_be_restored'); ?>",
+        type: "warning",
+        showCancelButton: true,
+        confirmButtonColor: "#DD6B55",
+        confirmButtonText: "<?= cclang('yes_approve_it'); ?>",
+        cancelButtonText: "<?= cclang('no_cancel_plx'); ?>",
+        closeOnConfirm: true,
+        closeOnCancel: true
+      },
+      function(isConfirm){
+        if (isConfirm) {
+          document.location.href = url;            
+        }
+      });
+
+    return false;
+    });
+  //-----------  
     $('.remove-data').click(function(){
 
       var url = $(this).attr('data-href');

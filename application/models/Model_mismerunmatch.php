@@ -89,6 +89,20 @@ class Model_mismerunmatch extends MY_Model {
     	return $this;
 	}
 
+// --------
+public function get_report_unmatch($bulan,$tahun){
+
+	return $this->db->query("
+	
+	SELECT * FROM mismerunmatch
+	WHERE EXTRACT(YEAR FROM OPEN_DATE)='$tahun'
+	AND EXTRACT(MONTH FROM OPEN_DATE)='$bulan'	
+	")->result();
+
+}
+// ----
+
+
 }
 
 /* End of file Model_mismerunmatch.php */

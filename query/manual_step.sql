@@ -169,7 +169,9 @@ AND CHANNEL IS NULL
 -- select * from mismerunmatch
 -- select count(*) from mismerunmatch
 
-
+	SELECT * FROM mismerunmatch
+	WHERE EXTRACT(YEAR FROM OPEN_DATE)='2018'
+	AND EXTRACT(MONTH FROM OPEN_DATE)='8'	
 -- =======================
 -- STEP 3 BULK UMPORT CSV emplateuploadmismer
 -- =======================
