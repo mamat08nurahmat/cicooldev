@@ -1047,6 +1047,130 @@ public function getModalResult2($tahun,$bulan,$wilayah){
 	}
 	
 
+// EXPORT
+public function getExport2($tahun,$bulan){
+
+
+	// $report = $this->model_Report->get_report($bulan,$tahun);
+	$report = $this->model_mismerdetail->getresult2($bulan,$tahun);
+
+
+// print_r($report);die();
+
+	$tabel_result2='';
+	// $tabel_result1.='';
+	$tabel_result2.='
+	<table class="blueTable">
+	<thead>
+	<tr>
+	<th width="10%">WILAYAH</th>
+	<th width="10%">EDC</th>
+	<th width="10%">YAP</th>
+	<th width="10%">TOTAL</th>
+
+	</tr>
+	</thead>
+	
+	<tbody>
+
+	';
+
+
+	$tot=0;
+	$tot1=0;
+	$tot2=0;
+	$total=0;	
+
+	foreach ($report as $r)
+	{
+
+// total
+$tot1+=$r->JUMLAH_EDC;
+$tot2+=$r->JUMLAH_YAP;
+$total =$tot1+$tot2;
+// total
+
+
+$jumlah =$r->JUMLAH_EDC+$r->JUMLAH_YAP;		
+
+	$tabel_result2.='
+	<tr>
+	<td>'.$r->WILAYAH.'</td>
+	<td>'.$r->JUMLAH_EDC.'</td>
+	<td>'.$r->JUMLAH_YAP.'</td>
+	<td>'.$jumlah.'</td>
+
+	</tr>
+	';
+
+}
+// end forech
+
+	$tabel_result2.='
+	<tfoot>
+	<tr >
+	<td >TOTAL</td>
+	<td>'.$tot1.'</td>
+	<td>'.$tot2.'</td>
+	<td>'.$total.'</td>
+	</tr>
+	</tfoot>
+	';
+	
+	$tabel_result2.='
+	</table>
+
+	
+	';
+
+	echo $tabel_result2;
+
+// 	$tabel_result2='';
+// 	// $tabel_result1.='';
+// 	$tabel_result2.='
+// 	<table class="blueTable">
+// <thead>
+// <tr>
+// <th>WILAYAH</th>
+// <th>EDC</th>
+// <th>YAP</th>
+// <th>TOTAL</th>
+// <th>#</th>
+// </tr>
+// </thead>
+
+// <tbody>
+// <tr>
+// <td>cell1_1</td>
+// <td>cell2_1</td>
+// <td>cell3_1</td>
+// <td>cell4_1</td>
+// <td>cell5_1</td>
+// </tr>
+// <tr>
+// <td>cell1_2</td>
+// <td>cell2_2</td>
+// <td>cell3_2</td>
+// <td>cell4_2</td>
+// <td>cell5_2</td>
+// </tr>
+// <tr>
+// <td>cell1_3</td>
+// <td>cell2_3</td>
+// <td>cell3_3</td>
+// <td>cell4_3</td>
+// <td>cell5_3</td>
+// </tr>
+// </tbody>
+// </table>
+// 	';
+
+// 	echo $tabel_result2;
+
+ }
+
+
+
 
 }
 
