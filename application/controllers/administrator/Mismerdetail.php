@@ -1048,7 +1048,7 @@ public function getModalResult2($tahun,$bulan,$wilayah){
 	
 
 // EXPORT
-public function getExport2($tahun,$bulan){
+public function getExport($tahun,$bulan){
 
 
 	// $report = $this->model_Report->get_report($bulan,$tahun);
@@ -1123,53 +1123,130 @@ $jumlah =$r->JUMLAH_EDC+$r->JUMLAH_YAP;
 	
 	';
 
+	$filename = "MISMER_".$tahun."_".$bulan.".xls";
+	header('Content-type: application/ms-excel');
+	header('Content-Disposition: attachment; filename='.$filename);	
 	echo $tabel_result2;
 
-// 	$tabel_result2='';
-// 	// $tabel_result1.='';
-// 	$tabel_result2.='
-// 	<table class="blueTable">
-// <thead>
-// <tr>
-// <th>WILAYAH</th>
-// <th>EDC</th>
-// <th>YAP</th>
-// <th>TOTAL</th>
-// <th>#</th>
-// </tr>
-// </thead>
-
-// <tbody>
-// <tr>
-// <td>cell1_1</td>
-// <td>cell2_1</td>
-// <td>cell3_1</td>
-// <td>cell4_1</td>
-// <td>cell5_1</td>
-// </tr>
-// <tr>
-// <td>cell1_2</td>
-// <td>cell2_2</td>
-// <td>cell3_2</td>
-// <td>cell4_2</td>
-// <td>cell5_2</td>
-// </tr>
-// <tr>
-// <td>cell1_3</td>
-// <td>cell2_3</td>
-// <td>cell3_3</td>
-// <td>cell4_3</td>
-// <td>cell5_3</td>
-// </tr>
-// </tbody>
-// </table>
-// 	';
-
-// 	echo $tabel_result2;
 
  }
 
 
+ public function getExportDetail($tahun,$bulan,$wilayah){
+
+	// $query = $this->model_Report->getModal($tahun,$bulan,$wilayah);
+	$query = $this->model_mismerdetail->getModalResult2($tahun,$bulan,$wilayah);
+		// print_r($query);die();
+		
+		$tabel='';
+		
+		
+		
+		// -------------
+	// 	$tabel.='
+	// 	<div class="modal-content">
+	
+	// 			<div class="modal-header">
+	// <center>
+	// 					<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+	// <h4 class="modal-title" id="myModalLabel">Detail report Wilayah '.$wilayah.' </h4>
+	// <h5 class="modal-title" id="myModalLabel">Bulan :  '.baca_bulan($bulan).'  Tahun : '.$tahun.'</h5>
+	// </center>
+	// 			</div>
+	// 			<div class="modal-body">
+	// 	 ';
+	// -------------
+	
+		$tabel.='
+		<center>
+		<table class="blueTable">		
+		<thead>
+			 <tr>
+	
+					<th>CHANNEL</th>
+					<th>JUMLAH YAP</th>
+					<th>JUMLAH EDC</th>
+					<th>TOTAL</th>
+	
+			 </tr>
+		</thead>';
+	
+	
+		$tabel.='
+				<tbody>';
+	
+				$tot=0;
+				$tot1=0;
+				$tot2=0;
+				$total=0;
+	
+	
+		foreach ($query as $q) {
+	$jumlah = $q->JUMLAH_YAP+$q->JUMLAH_EDC;
+	
+	$tot1+=$q->JUMLAH_EDC;
+	$tot2+=$q->JUMLAH_YAP;
+	
+	$total =$tot1+$tot2;
+	
+				$tabel.='
+	<tr>
+	
+				<td>'.$q->CHANNEL.'</td>
+				<td></td>
+				<td>'.$q->JUMLAH_EDC.'</td>
+				<td></td>
+	</tr>';
+	
+	}
+	
+	
+	$tabel.='</tbody>';
+	
+	$tabel.='
+	<tfoot>
+	<tr>
+	<td>TOTAL</td>
+	<td>'.$tot2.'</td>
+	<td>'.$tot1.'</td>
+	<td>'.$total.'</td>
+	</tr>
+	</tfoot>
+	';
+	
+	$tabel.='
+		</table>
+		</center>		
+		';
+	// ------------
+	
+	$tabel.='
+	
+	</div>
+	
+	
+	</div>
+		';
+	// 
+
+	$filename = "MISMER_".$tahun."_".$bulan."_".$wilayah.".xls";
+	header('Content-type: application/ms-excel');
+	header('Content-Disposition: attachment; filename='.$filename);	
+	
+
+	echo $tabel;
+	}
+
+
+public function excel_tes(){
+
+	$filename ="excelreport.xls";
+	$contents = "testdata1 \t testdata2 \t testdata3 \t \n";
+	header('Content-type: application/ms-excel');
+	header('Content-Disposition: attachment; filename='.$filename);
+	echo $contents;
+
+}
 
 
 }
